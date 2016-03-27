@@ -17,21 +17,21 @@
                         <h:outputText value="#{positionView.selected.latitude}"/>
                         <h:outputText value="#{bundle.Longitude}"/>
                         <h:outputText value="#{positionView.selected.longitude}"/>
-                        <h:outputText value="#{bundle.Altitude}"/>
-                        <h:outputText value="#{positionView.selected.altitude}"/>
-                        <h:outputText value="#{bundle.Timestamp}"/>
-                        <h:outputText value="#{positionView.selected.trackedOn.time}">
+                        <h:outputText value="#{bundle.AverageAltitude}"/>
+                        <h:outputText value="#{positionView.selected.averageAltitude}"/>
+                        <h:outputText value="#{bundle.ModifiedOn}"/>
+                        <h:outputText value="#{positionView.selected.modifiedOn.time}">
                             <f:convertDateTime type="both" dateStyle="long" />
                         </h:outputText>
 
-                        <h:outputText value="#{bundle.Maker}"/>
+<!--                        <h:outputText value="#{bundle.Maker}"/>
                         <h:outputText value="#{positionView.selected.maker}"/>
                         <h:outputText value="#{bundle.Model}"/>
                         <h:outputText value="#{positionView.selected.model}"/>
                         <h:outputText value="#{bundle.Software}"/>
                         <h:outputText value="#{positionView.selected.software}"/>
                         <h:outputText value="#{bundle.Source}"/>
-                        <h:outputText value="#{positionView.selected.source}"/>
+                        <h:outputText value="#{positionView.selected.source}"/>-->
                         
                         <h:outputText value="#{bundle.Position}"/>
                         <p:gmap id="gmap-#{positionView.selected.id}"  model="#{positionView.markerModel}" center="#{positionView.center}" zoom="13" type="HYBRID" style="width:320px;height:320px"></p:gmap>  

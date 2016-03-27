@@ -15,8 +15,10 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultStreamedContent;
@@ -55,7 +57,11 @@ public class PositionView implements Serializable {
     private MapModel markerModel;
 
     private String selectedImageURL;
-
+   
+    private StreamedContent shapefilesWithAllFeatures;
+    
+    private StreamedContent shapefilesWithAverageAltitude;
+    
     @PostConstruct
     public void init() {
         this.markerModel = new DefaultMapModel();
@@ -100,10 +106,8 @@ public class PositionView implements Serializable {
     private Predicate getCoordinatePredicate(Map<String, Object> filters) {
         final String latitude = filters.containsKey("latitude") ? String.valueOf(filters.get("latitude")) : null;
         final String longitude = filters.containsKey("longitude") ? String.valueOf(filters.get("longitude")) : null;
-        final String altitude = filters.containsKey("altitude") ? String.valueOf(filters.get("altitude")) : null;
-        final String maker = filters.containsKey("maker") ? String.valueOf(filters.get("maker")) : null;
-        final String model = filters.containsKey("model") ? String.valueOf(filters.get("model")) : null;
-        return PositionPredicate.predicateWithLocationAndDevice(latitude, longitude, altitude, maker, model);
+        final String averageAltitude = filters.containsKey("averageAltitude") ? String.valueOf(filters.get("s")) : null;
+        return PositionPredicate.predicateWithLocationAndDevice(latitude, longitude, averageAltitude);
     }
 
     public void onRowSelect(SelectEvent event) {
@@ -113,7 +117,7 @@ public class PositionView implements Serializable {
         if (null != this.selected && null != this.selected.getLatitude() && null != this.selected.getLongitude()) {
             final LatLng coord = new LatLng(this.selected.getLatitude(), this.selected.getLongitude());
             final StringBuilder altitude = new StringBuilder();
-            altitude.append(null == this.selected.getAltitude() ? "-" : this.selected.getAltitude());
+            altitude.append(null == this.selected.getAverageAltitude() ? "-" : this.selected.getAverageAltitude());
             this.getMarkerModel().addOverlay(new Marker(coord, altitude.toString(), "", "http://maps.google.com/mapfiles/ms/micons/blue-dot.png"));
         }
     }
@@ -169,13 +173,27 @@ public class PositionView implements Serializable {
         return selectedImageURL;
     }
 
-    public StreamedContent getShapefile() {
+    public StreamedContent getShapefileWithAverageAltitude() {
         try {
-            final File shapefile = this.shapefileService.exportShapefileWithAllFeatures();
-            return new DefaultStreamedContent(new FileInputStream(shapefile), "application/zip", this.shapefileService.ARCHIVE_FILENAME);
+            final File zippedShapefiles = this.shapefileService.exportShapefileWithAllFeaturesAndAverageAltitude();
+            this.shapefilesWithAverageAltitude = new DefaultStreamedContent(new FileInputStream(zippedShapefiles), "application/zip", this.shapefileService.getArchiveFilenameAverageAltitude());
         } catch (FileNotFoundException ex) {
+            FacesMessage message = new FacesMessage("Failed", "Could not export shapefiles with average altitude.");
+            FacesContext.getCurrentInstance().addMessage(null, message);
             Logger.getLogger(PositionView.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return null;
+        return this.shapefilesWithAverageAltitude;
+    }
+    
+    public StreamedContent getShapefilesWithAllFeatures() {
+        try {
+            final File zippedShapefiles = this.shapefileService.exportShapefileWithAllFeatures();
+            this.shapefilesWithAllFeatures = new DefaultStreamedContent(new FileInputStream(zippedShapefiles), "application/zip", this.shapefileService.getArchiveFilenameAll());
+        } catch (FileNotFoundException ex) {
+            FacesMessage message = new FacesMessage("Failed", "Could not export shapefiles.");
+            FacesContext.getCurrentInstance().addMessage(null, message);
+            Logger.getLogger(PositionView.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return this.shapefilesWithAllFeatures;
     }
 }

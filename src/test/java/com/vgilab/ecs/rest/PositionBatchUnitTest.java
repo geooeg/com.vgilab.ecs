@@ -1,6 +1,7 @@
 package com.vgilab.ecs.rest;
 
 import com.google.gson.Gson;
+import com.vgilab.ecs.persistence.repositories.PositionInTimeRepository;
 import com.vgilab.ecs.persistence.repositories.PositionRepository;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,16 +26,19 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
  * @author smuellner
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(locations={"classpath:testApplicationContext.xml"})
+@SpringApplicationConfiguration(locations = {"classpath:testApplicationContext.xml"})
 public class PositionBatchUnitTest {
 
     private PositionBatchResource mockedPositionBatchResource;
-    
+
     private MockMvc mockMvc;
 
     @Autowired
     private PositionRepository positionRepository;
-    
+
+    @Autowired
+    private PositionInTimeRepository positionInTimeRepository;
+
     public PositionBatchUnitTest() {
     }
 
@@ -48,14 +52,16 @@ public class PositionBatchUnitTest {
 
     @Before
     public void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(new PositionController(positionRepository)).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new PositionController(positionRepository, positionInTimeRepository)).build();
         final List<PositionResource> positions = new LinkedList<>();
-        final PositionResource positionResource = new PositionResource();
-        positionResource.setAltitude(1223.1212d);
-        positionResource.setLongitude(9.7332200d);
-        positionResource.setLatitude(52.3705200d);
-        positionResource.setTrackedOn(1457819036l);
-        positions.add(positionResource);
+        for (int i = 1; i < 4; i++) {
+            final PositionResource positionResource = new PositionResource();
+            positionResource.setAltitude(10d * i);
+            positionResource.setLongitude(9.7332200d);
+            positionResource.setLatitude(52.3705200d);
+            positionResource.setTrackedOn(1457989364000l);
+            positions.add(positionResource);
+        }
         mockedPositionBatchResource = new PositionBatchResource();
         mockedPositionBatchResource.setMaker("Apple");
         mockedPositionBatchResource.setModel("iPhone 5s");

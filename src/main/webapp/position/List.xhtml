@@ -10,7 +10,6 @@
         <title><ui:insert name="title">#{bundle.Positions}</ui:insert></title>
         <script type='text/javascript' src='http://maps.google.com/maps/api/js?sensor=true'></script>
     </h:head>
-
     <h:body>
         <script type="text/javascript">
             function showStatus() {
@@ -40,26 +39,23 @@
                 <p:column headerText="#{bundle.Longitude}" sortBy="#{position.longitude}" filterBy="#{position.longitude}">
                     <h:outputText value="#{position.longitude}" />
                 </p:column>
-                <p:column headerText="#{bundle.Altitude}" sortBy="#{position.altitude}" filterBy="#{position.altitude}">
-                    <h:outputText value="#{position.altitude}" />
+                <p:column headerText="#{bundle.AverageAltitude}" sortBy="#{position.averageAltitude}" filterBy="#{position.averageAltitude}">
+                    <h:outputText value="#{position.averageAltitude}" />
                 </p:column>
-                <p:column headerText="#{bundle.Maker}" sortBy="#{position.maker}" filterBy="#{position.maker}">
-                    <h:outputText value="#{position.maker}" />
-                </p:column>
-                <p:column headerText="#{bundle.Model}" sortBy="#{position.model}" filterBy="#{position.model}">
-                    <h:outputText value="#{position.model}" />
-                </p:column>
-                <p:column headerText="#{bundle.Timestamp}" sortBy="#{position.trackedOn}">
-                    <h:outputText value="#{position.trackedOn.time}">
+                <p:column headerText="#{bundle.Timestamp}" sortBy="#{position.modifiedOn}">
+                    <h:outputText value="#{position.modifiedOn.time}">
                         <f:convertDateTime type="both" dateStyle="long" />
                     </h:outputText>
                 </p:column>
 
                 <f:facet name="footer">
                     <p:commandButton id="viewButton" icon="ui-icon-search" value="#{bundle.View}" update=":PositionsViewForm" oncomplete="PF('PositionsViewDialog').show()" disabled="#{empty positionView.selected}"/>
-                    <p:commandButton id="shapefileButton" ajax="false" onclick="PrimeFaces.monitorDownload(showStatus, hideStatus)" icon="ui-icon-arrowthick-1-s" value="#{bundle.ExportShapefile}">
-                        <p:fileDownload value="#{positionView.shapefile}" />
-                    </p:commandButton>       
+                    <p:commandButton id="shapefileWithAverageAltitudeButton" ajax="false" onclick="PrimeFaces.monitorDownload(showStatus, hideStatus)" icon="ui-icon-arrowthick-1-s" value="#{bundle.ExportShapefileWithAverageAltitude}">
+                        <p:fileDownload value="#{positionView.shapefileWithAverageAltitude}" />
+                    </p:commandButton>
+                    <p:commandButton id="shapefileButton" ajax="false" onclick="PrimeFaces.monitorDownload(showStatus, hideStatus)" icon="ui-icon-arrowthick-1-s" value="#{bundle.ExportShapefileAllAltitude}">
+                        <p:fileDownload value="#{positionView.shapefilesWithAllFeatures}" />
+                    </p:commandButton>
                 </f:facet>
             </p:dataTable>
         </h:form>

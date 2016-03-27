@@ -1,6 +1,6 @@
 package com.vgilab.ecs.persistence.repositories;
 
-import com.vgilab.ecs.persistence.entity.Position;
+import com.vgilab.ecs.persistence.entity.PositionInTime;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
  * @author ljzhang
  */
 @Repository
-public interface PositionRepository extends PagingAndSortingRepository<Position, Long>, QueryDslPredicateExecutor<Position>  {
+public interface PositionInTimeRepository extends PagingAndSortingRepository<PositionInTime, Long>, QueryDslPredicateExecutor<PositionInTime>  {
 
     /**
      *
@@ -22,23 +22,15 @@ public interface PositionRepository extends PagingAndSortingRepository<Position,
      * @return
      */
     @Override
-    public Position findOne(Long id);
+    public PositionInTime findOne(Long id);
     
-    /**
-     *
-     * @param longitude
-     * @param latitude
-     * @return
-     */
-    public Position findByLongitudeAndLatitude(Double longitude, Double latitude);
-
     /**
      *
      * @param sort
      * @return
      */
     @Override
-    public Iterable<Position> findAll(Sort sort);
+    public Iterable<PositionInTime> findAll(Sort sort);
 
     /**
      *
@@ -46,14 +38,14 @@ public interface PositionRepository extends PagingAndSortingRepository<Position,
      * @return
      */
     @Override
-    public Page<Position> findAll(Pageable pgbl);
+    public Page<PositionInTime> findAll(Pageable pgbl);
 
     /**
      *
      * @return
      */
     @Override
-    public List<Position> findAll();
+    public List<PositionInTime> findAll();
 
     /**
      *
@@ -61,7 +53,7 @@ public interface PositionRepository extends PagingAndSortingRepository<Position,
      * @return
      */
     @Override
-    public Position save(Position persisted);
+    public PositionInTime save(PositionInTime persisted);
 
     /**
      *

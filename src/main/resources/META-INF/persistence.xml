@@ -8,9 +8,9 @@
       <property name="javax.persistence.jdbc.user" value="ecs"/>
       <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
       <property name="javax.persistence.jdbc.password" value="YOUR_SECURE_PASSWORD"/>
-      <property name="javax.persistence.schema-generation.database.action" value="none"/>
     </properties>
     <class>com.vgilab.ecs.persistence.entity.Position</class>
+    <class>com.vgilab.ecs.persistence.entity.PositionInTime</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
   </persistence-unit>
 </persistence>

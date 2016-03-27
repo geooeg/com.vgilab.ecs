@@ -2,11 +2,16 @@ package com.vgilab.ecs.persistence.entity;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.LinkedList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -18,48 +23,33 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = "positions")
 public class Position implements Serializable {
+
     private static final long serialVersionUID = 12L;
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    
-    @Column(name = "maker")
-    private String maker;
-    
-    @Column(name = "model")
-    private String model;
-    
-    @Column(name = "software")
-    private String software;
-    
-    @Column(name = "source")
-    private String source;
-       
+
     @Column(name = "longitude")
     private Double longitude;
-        
+
     @Column(name = "latitude")
     private Double latitude;
     
-    @Column(name = "altitude")
-    private Double altitude;
+    @Column(name = "average_altitude")
+    private Double averageAltitude;
     
-    @Column(name = "accuracy")
-    private String accuracy;
-    
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "timestamp", nullable = true)
-    private Calendar trackedOn;
-    
+    @OneToMany(mappedBy="position", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<PositionInTime> positionsInTime = new LinkedList<>();
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_on", nullable = false)
     private Calendar createdOn;
-    
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "modified_on", nullable = true)
     private Calendar modifiedOn;
-    
+
     /**
      * @return the id
      */
@@ -72,62 +62,6 @@ public class Position implements Serializable {
      */
     public void setId(Long id) {
         this.id = id;
-    }
-
-    /**
-     * @return the maker
-     */
-    public String getMaker() {
-        return maker;
-    }
-
-    /**
-     * @param maker the maker to set
-     */
-    public void setMaker(String maker) {
-        this.maker = maker;
-    }
-
-    /**
-     * @return the model
-     */
-    public String getModel() {
-        return model;
-    }
-
-    /**
-     * @param model the model to set
-     */
-    public void setModel(String model) {
-        this.model = model;
-    }
-
-    /**
-     * @return the software
-     */
-    public String getSoftware() {
-        return software;
-    }
-
-    /**
-     * @param software the software to set
-     */
-    public void setSoftware(String software) {
-        this.software = software;
-    }
-
-    /**
-     * @return the source
-     */
-    public String getSource() {
-        return source;
-    }
-
-    /**
-     * @param source the source to set
-     */
-    public void setSource(String source) {
-        this.source = source;
     }
 
     /**
@@ -157,47 +91,33 @@ public class Position implements Serializable {
     public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
-    
+
     /**
-     * @return the altitude
+     * @return the averageAltitude
      */
-    public Double getAltitude() {
-        return altitude;
+    public Double getAverageAltitude() {
+        return averageAltitude;
     }
 
     /**
-     * @param altitude the altitude to set
+     * @param averageAltitude the averageAltitude to set
      */
-    public void setAltitude(Double altitude) {
-        this.altitude = altitude;
+    public void setAverageAltitude(Double averageAltitude) {
+        this.averageAltitude = averageAltitude;
     }
 
     /**
-     * @return the accuracy
+     * @return the positionsInTime
      */
-    public String getAccuracy() {
-        return accuracy;
+    public List<PositionInTime> getPositionsInTime() {
+        return positionsInTime;
     }
 
     /**
-     * @param accuracy the accuracy to set
+     * @param positionsInTime the positionsInTime to set
      */
-    public void setAccuracy(String accuracy) {
-        this.accuracy = accuracy;
-    }
-
-    /**
-     * @return the trackedOn
-     */
-    public Calendar getTrackedOn() {
-        return trackedOn;
-    }
-
-    /**
-     * @param trackedOn the trackedOn to set
-     */
-    public void setTrackedOn(Calendar trackedOn) {
-        this.trackedOn = trackedOn;
+    public void setPositionsInTime(List<PositionInTime> positionsInTime) {
+        this.positionsInTime = positionsInTime;
     }
 
     /**
@@ -230,7 +150,7 @@ public class Position implements Serializable {
 
     @Override
     public String toString() {
-        return "com.vgilab.ecs.persistence.entity.Coordinate[ id=" + getId() + " ]";
+        return "com.vgilab.ecs.persistence.entity.Position[ id=" + getId() + " ]";
     }
 
 }

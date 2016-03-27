@@ -16,12 +16,10 @@ public class PositionPredicate {
      *
      * @param latitude
      * @param longitude
-     * @param altitude
-     * @param maker
-     * @param model
+     * @param averageAltitude
      * @return
      */
-    public static Predicate predicateWithLocationAndDevice(String latitude, String longitude, String altitude, String maker, String model) {
+    public static Predicate predicateWithLocationAndDevice(String latitude, String longitude, String averageAltitude) {
         final BooleanBuilder where = new BooleanBuilder();
         if (StringUtils.isNotBlank(latitude)) {
             where.and(latitudeContains(Double.valueOf(latitude)));
@@ -29,17 +27,12 @@ public class PositionPredicate {
         if (StringUtils.isNotBlank(longitude)) {
             where.and(longitudeContains(Double.valueOf(longitude)));
         }
-        if (StringUtils.isNotBlank(altitude)) {
-            where.and(altitudeContains(Double.valueOf(altitude)));
-        }
-        if (StringUtils.isNotBlank(maker)) {
-            where.and(makerContains(maker));
-        }
-        if (StringUtils.isNotBlank(model)) {
-            where.and(modelContains(model));
+        if (StringUtils.isNotBlank(averageAltitude)) {
+            where.and(averageAltitudeContains(Double.valueOf(averageAltitude)));
         }
         where.and(QPosition.position.latitude.isNotNull());
         where.and(QPosition.position.longitude.isNotNull());
+        where.and(QPosition.position.averageAltitude.isNotNull());
         return where;
     }
     
@@ -73,32 +66,12 @@ public class PositionPredicate {
     
     /**
      *
-     * @param altitude
+     * @param averageAltitude
      * @return
      */
-    public static Predicate altitudeContains(Double altitude) {
+    public static Predicate averageAltitudeContains(Double averageAltitude) {
         final QPosition position = QPosition.position;
-        return position.altitude.eq(altitude);
-    }
-    
-    /**
-     *
-     * @param maker
-     * @return
-     */
-    public static Predicate makerContains(String maker) {
-        final QPosition position = QPosition.position;
-        return position.maker.containsIgnoreCase(maker);
-    }
-    
-    /**
-     *
-     * @param model
-     * @return
-     */
-    public static Predicate modelContains(String model) {
-        final QPosition position = QPosition.position;
-        return position.model.containsIgnoreCase(model);
+        return position.averageAltitude.eq(averageAltitude);
     }
 
 }

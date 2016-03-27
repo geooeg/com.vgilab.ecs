@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,6 +24,8 @@ import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.simple.SimpleFeatureStore;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,16 +35,26 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class ShapefileService {
-    public String FILENAME = "ecs";
-    public String SHAPEFILE_FILENAME = FILENAME + ".shp";
-    public String ARCHIVE_FILENAME = FILENAME + ".zip";
+    public String FILENAME_ALL = "ecs-all";
+    public String FILENAME_AVERAGE = "ecs-average";
+    public String SHAPEFILE_EXTENSION = ".shp";
+    public String ARCHIVE_EXTENSION = ".zip";
 
     @Autowired
     private FeatureService featureService;
 
     public File exportShapefileWithAllFeatures() {
+        return this.exportShapefile(FILENAME_ALL, this.featureService.getFeatureType(), this.featureService.exportAllFeatures());
+
+    }
+    
+    public File exportShapefileWithAllFeaturesAndAverageAltitude() {
+        return this.exportShapefile(FILENAME_AVERAGE, this.featureService.getFeatureType(), this.featureService.exportAllFeaturesWithAverageAltitude());
+    }
+    
+    private File exportShapefile(String filename, SimpleFeatureType featureType, List<SimpleFeature> exportAllFeatures) {
         final File shapeDir = Files.createTempDir();
-        final File shapeFile = new File(shapeDir, SHAPEFILE_FILENAME);
+        final File shapeFile = new File(shapeDir, filename + SHAPEFILE_EXTENSION);
         // LOG.debug("writing out shapefile {}", shapeFile);
         try {
             final ShapefileDataStoreFactory dataStoreFactory = new ShapefileDataStoreFactory();
@@ -49,7 +62,7 @@ public class ShapefileService {
             params.put("url", shapeFile.toURI().toURL());
             params.put("create spatial index", Boolean.TRUE);
             final ShapefileDataStore shapefileDataStore = (ShapefileDataStore) dataStoreFactory.createNewDataStore(params);
-            shapefileDataStore.createSchema(this.featureService.getFeatureType());
+            shapefileDataStore.createSchema(featureType);
             final Transaction transaction = new DefaultTransaction("create");
             final String typeName = shapefileDataStore.getTypeNames()[0];
             final SimpleFeatureSource featureSource = shapefileDataStore.getFeatureSource(typeName);
@@ -60,7 +73,7 @@ public class ShapefileService {
                  * SimpleFeatureCollection object, so we use the ListFeatureCollection
                  * class to wrap our list of features.
                  */
-                final SimpleFeatureCollection collection = new ListFeatureCollection(this.featureService.getFeatureType(), this.featureService.exportAllFeatures());
+                final SimpleFeatureCollection collection = new ListFeatureCollection(featureType, exportAllFeatures);
                 featureStore.setTransaction(transaction);
                 try {
                     featureStore.addFeatures(collection);
@@ -75,7 +88,7 @@ public class ShapefileService {
                 System.out.println(typeName + " does not support read/write access");
             }
             shapeDir.deleteOnExit(); // Note: the order is important
-            final File zipFile = new File(shapeDir + File.pathSeparator + ARCHIVE_FILENAME);
+            final File zipFile = new File(shapeDir + File.pathSeparator + filename + ARCHIVE_EXTENSION);
             try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(zipFile))) {
                 for (File file : shapeDir.listFiles()) {
                     file.deleteOnExit();
@@ -98,7 +111,14 @@ public class ShapefileService {
             Logger.getLogger(ShapefileService.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
+    }
 
+    public String getArchiveFilenameAll() {
+        return FILENAME_ALL + ARCHIVE_EXTENSION;
+    }
+    
+    public String getArchiveFilenameAverageAltitude() {
+        return FILENAME_AVERAGE + ARCHIVE_EXTENSION;
     }
 
 }

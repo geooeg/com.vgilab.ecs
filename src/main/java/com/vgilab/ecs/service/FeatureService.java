@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * http://docs.geotools.org/stable/tutorials/feature/csv2shp.html
- * 
+ *
  * @author ljzhang
  */
 @Service
@@ -39,19 +39,49 @@ public class FeatureService {
         final GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
         final SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(this.getFeatureType());
         final List<Position> allPositions = this.positionRepository.findAll();
-        for (final Position curPosition : allPositions) {
-            if (null != curPosition.getLatitude() && null != curPosition.getLongitude()) {
-                final Double longitude = curPosition.getLongitude();
-                final Double latitude = curPosition.getLatitude();
-                final Coordinate coordinate = curPosition.getAltitude() != null ? new Coordinate(longitude, latitude, curPosition.getAltitude()) : new Coordinate(longitude, latitude);
+        allPositions.stream().filter((curPosition) -> (null != curPosition.getLatitude() && null != curPosition.getLongitude())).forEach((curPosition) -> {
+            final Double longitude = curPosition.getLongitude();
+            final Double latitude = curPosition.getLatitude();
+            curPosition.getPositionsInTime().stream().map((curPositionInTime) -> {
+                final Coordinate coordinate = curPositionInTime.getAltitude() != null ? new Coordinate(longitude, latitude, curPositionInTime.getAltitude()) : new Coordinate(longitude, latitude);
                 final Point point = geometryFactory.createPoint(coordinate);
                 featureBuilder.add(point);
-                if (null != curPosition.getAltitude()) {
-                    featureBuilder.add(curPosition.getAltitude());
+                if (null != curPositionInTime.getAltitude()) {
+                    featureBuilder.add(curPositionInTime.getAltitude());
                 }
+                return curPositionInTime;
+            }).forEach((_item) -> {
                 features.add(featureBuilder.buildFeature(null));
+            });
+        });
+        return features;
+    }
+
+    public List<SimpleFeature> exportAllFeaturesWithAverageAltitude() {
+        /*
+         * A list to collect features as we create them.
+         */
+        final List<SimpleFeature> features = new ArrayList<>();
+        /*
+         * GeometryFactory will be used to create the geometry attribute of each feature,
+         * using a Position object for the location.
+         */
+        final GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
+        final SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(this.getFeatureType());
+        final List<Position> allPositions = this.positionRepository.findAll();
+        allPositions.stream().filter((curPosition) -> (null != curPosition.getLatitude() && null != curPosition.getLongitude())).map((curPosition) -> {
+            final Double longitude = curPosition.getLongitude();
+            final Double latitude = curPosition.getLatitude();
+            final Coordinate coordinate = curPosition.getAverageAltitude() != null ? new Coordinate(longitude, latitude, curPosition.getAverageAltitude()) : new Coordinate(longitude, latitude);
+            final Point point = geometryFactory.createPoint(coordinate);
+            featureBuilder.add(point);
+            if (null != curPosition.getAverageAltitude()) {
+                featureBuilder.add(curPosition.getAverageAltitude());
             }
-        }
+            return curPosition;
+        }).forEach((_item) -> {
+            features.add(featureBuilder.buildFeature(null));
+        });
         return features;
     }
 
