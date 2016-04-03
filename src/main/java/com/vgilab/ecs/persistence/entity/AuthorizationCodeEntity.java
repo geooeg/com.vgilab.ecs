@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -15,6 +16,7 @@ import javax.persistence.TemporalType;
  * @author smuellner
  */
 @Entity
+@Table(name = "authorization_codes")
 public class AuthorizationCodeEntity extends BaseEntity<String> {
 
     private static final long serialVersionUID = 1L;
