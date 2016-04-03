@@ -1,7 +1,7 @@
 
 package com.vgilab.ecs.service;
 
-import com.vgilab.ecs.persistence.entity.Position;
+import com.vgilab.ecs.persistence.entity.PositionEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,11 +18,11 @@ public class CoordinateService {
     @Autowired
     PositionRepository coordinateRepository;
 
-    public Position save(Position coordinate) {
+    public PositionEntity save(PositionEntity coordinate) {
         return this.coordinateRepository.save(coordinate);
     }
 
-    public Page<Position> findAll(PageRequest pageRequest) {
+    public Page<PositionEntity> findAll(PageRequest pageRequest) {
         return this.coordinateRepository.findAll(pageRequest);
     }
 
@@ -30,7 +30,7 @@ public class CoordinateService {
         return this.coordinateRepository.count();
     }
 
-    public Position findOne(Long id) {
+    public PositionEntity findOne(Long id) {
         return this.coordinateRepository.findOne(id);
     }
 }

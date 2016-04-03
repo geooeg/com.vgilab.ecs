@@ -1,6 +1,6 @@
 package com.vgilab.ecs.persistence.repositories;
 
-import com.vgilab.ecs.persistence.entity.Position;
+import com.vgilab.ecs.persistence.entity.PositionEntity;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
  * @author ljzhang
  */
 @Repository
-public interface PositionRepository extends PagingAndSortingRepository<Position, Long>, QueryDslPredicateExecutor<Position>  {
+public interface PositionRepository extends PagingAndSortingRepository<PositionEntity, Long>, QueryDslPredicateExecutor<PositionEntity>  {
 
     /**
      *
@@ -22,7 +22,7 @@ public interface PositionRepository extends PagingAndSortingRepository<Position,
      * @return
      */
     @Override
-    public Position findOne(Long id);
+    public PositionEntity findOne(Long id);
     
     /**
      *
@@ -30,7 +30,7 @@ public interface PositionRepository extends PagingAndSortingRepository<Position,
      * @param latitude
      * @return
      */
-    public Position findByLongitudeAndLatitude(Double longitude, Double latitude);
+    public PositionEntity findByLongitudeAndLatitude(Double longitude, Double latitude);
 
     /**
      *
@@ -38,7 +38,7 @@ public interface PositionRepository extends PagingAndSortingRepository<Position,
      * @return
      */
     @Override
-    public Iterable<Position> findAll(Sort sort);
+    public Iterable<PositionEntity> findAll(Sort sort);
 
     /**
      *
@@ -46,14 +46,14 @@ public interface PositionRepository extends PagingAndSortingRepository<Position,
      * @return
      */
     @Override
-    public Page<Position> findAll(Pageable pgbl);
+    public Page<PositionEntity> findAll(Pageable pgbl);
 
     /**
      *
      * @return
      */
     @Override
-    public List<Position> findAll();
+    public List<PositionEntity> findAll();
 
     /**
      *
@@ -61,7 +61,7 @@ public interface PositionRepository extends PagingAndSortingRepository<Position,
      * @return
      */
     @Override
-    public Position save(Position persisted);
+    public PositionEntity save(PositionEntity persisted);
 
     /**
      *

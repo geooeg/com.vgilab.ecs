@@ -1,6 +1,6 @@
 package com.vgilab.ecs.service;
 
-import com.vgilab.ecs.persistence.entity.Position;
+import com.vgilab.ecs.persistence.entity.PositionEntity;
 import com.vgilab.ecs.persistence.repositories.PositionRepository;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -34,11 +34,11 @@ public class FeatureService {
         final List<SimpleFeature> features = new ArrayList<>();
         /*
          * GeometryFactory will be used to create the geometry attribute of each feature,
-         * using a Position object for the location.
+         * using a PositionEntity object for the location.
          */
         final GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
         final SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(this.getFeatureType());
-        final List<Position> allPositions = this.positionRepository.findAll();
+        final List<PositionEntity> allPositions = this.positionRepository.findAll();
         allPositions.stream().filter((curPosition) -> (null != curPosition.getLatitude() && null != curPosition.getLongitude())).forEach((curPosition) -> {
             final Double longitude = curPosition.getLongitude();
             final Double latitude = curPosition.getLatitude();
@@ -64,11 +64,11 @@ public class FeatureService {
         final List<SimpleFeature> features = new ArrayList<>();
         /*
          * GeometryFactory will be used to create the geometry attribute of each feature,
-         * using a Position object for the location.
+         * using a PositionEntity object for the location.
          */
         final GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
         final SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(this.getFeatureType());
-        final List<Position> allPositions = this.positionRepository.findAll();
+        final List<PositionEntity> allPositions = this.positionRepository.findAll();
         allPositions.stream().filter((curPosition) -> (null != curPosition.getLatitude() && null != curPosition.getLongitude())).map((curPosition) -> {
             final Double longitude = curPosition.getLongitude();
             final Double latitude = curPosition.getLatitude();

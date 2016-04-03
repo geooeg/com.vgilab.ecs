@@ -1,6 +1,5 @@
 package com.vgilab.ecs.persistence.entity;
 
-import java.io.Serializable;
 import java.util.Calendar;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,30 +18,22 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "positions_in_time")
-public class PositionInTime implements Serializable {
+public class PositionInTimeEntity extends BaseEntity<Long> {
 
     private static final long serialVersionUID = 1L;
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    
+    @ManyToOne
+    @JoinColumn(name = "trip_id")
+    private TripEntity trip;
 
     @ManyToOne
     @JoinColumn(name = "position_id")
-    private Position position;
-    
-    @Column(name = "maker")
-    private String maker;
-    
-    @Column(name = "model")
-    private String model;
-    
-    @Column(name = "software")
-    private String software;
-    
-    @Column(name = "source")
-    private String source;
-    
+    private PositionEntity position;
+        
     @Column(name = "altitude")
     private Double altitude;
     
@@ -58,90 +49,51 @@ public class PositionInTime implements Serializable {
     @Column(name = "speed")
     private Double speed;
     
+    @Column(name = "floor")
+    private Integer floor;
+    
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "timestamp", nullable = true)
+    @Column(name = "trackedOn", nullable = true)
     private Calendar trackedOn;
     
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_on", nullable = false)
-    private Calendar createdOn;
-    
+    @Override
     public Long getId() {
         return id;
     }
-
+    
+    /**
+     * @param id the id to set
+     */
     public void setId(Long id) {
         this.id = id;
     }
 
     /**
+     * @return the trip
+     */
+    public TripEntity getTrip() {
+        return trip;
+    }
+
+    /**
+     * @param trip the trip to set
+     */
+    public void setTrip(TripEntity trip) {
+        this.trip = trip;
+    }
+
+    /**
      * @return the position
      */
-    public Position getPosition() {
+    public PositionEntity getPosition() {
         return position;
     }
 
     /**
      * @param position the position to set
      */
-    public void setPosition(Position position) {
+    public void setPosition(PositionEntity position) {
         this.position = position;
-    }
-
-    /**
-     * @return the maker
-     */
-    public String getMaker() {
-        return maker;
-    }
-
-    /**
-     * @param maker the maker to set
-     */
-    public void setMaker(String maker) {
-        this.maker = maker;
-    }
-
-    /**
-     * @return the model
-     */
-    public String getModel() {
-        return model;
-    }
-
-    /**
-     * @param model the model to set
-     */
-    public void setModel(String model) {
-        this.model = model;
-    }
-
-    /**
-     * @return the software
-     */
-    public String getSoftware() {
-        return software;
-    }
-
-    /**
-     * @param software the software to set
-     */
-    public void setSoftware(String software) {
-        this.software = software;
-    }
-
-    /**
-     * @return the source
-     */
-    public String getSource() {
-        return source;
-    }
-
-    /**
-     * @param source the source to set
-     */
-    public void setSource(String source) {
-        this.source = source;
     }
 
     /**
@@ -213,6 +165,20 @@ public class PositionInTime implements Serializable {
     public void setSpeed(Double speed) {
         this.speed = speed;
     }
+
+    /**
+     * @return the floor
+     */
+    public Integer getFloor() {
+        return floor;
+    }
+
+    /**
+     * @param floor the floor to set
+     */
+    public void setFloor(Integer floor) {
+        this.floor = floor;
+    }
     
     /**
      * @return the trackedOn
@@ -228,20 +194,6 @@ public class PositionInTime implements Serializable {
         this.trackedOn = trackedOn;
     }
 
-    /**
-     * @return the createdOn
-     */
-    public Calendar getCreatedOn() {
-        return createdOn;
-    }
-
-    /**
-     * @param createdOn the createdOn to set
-     */
-    public void setCreatedOn(Calendar createdOn) {
-        this.createdOn = createdOn;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -252,14 +204,11 @@ public class PositionInTime implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof PositionInTime)) {
+        if (!(object instanceof PositionInTimeEntity)) {
             return false;
         }
-        PositionInTime other = (PositionInTime) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        PositionInTimeEntity other = (PositionInTimeEntity) object;
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override

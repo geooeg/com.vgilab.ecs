@@ -1,7 +1,7 @@
 package com.vgilab.ecs.view;
 
 import com.mysema.query.types.Predicate;
-import com.vgilab.ecs.persistence.entity.Position;
+import com.vgilab.ecs.persistence.entity.PositionEntity;
 import com.vgilab.ecs.persistence.predicates.PositionPredicate;
 import com.vgilab.ecs.persistence.repositories.PositionRepository;
 import com.vgilab.ecs.service.ShapefileService;
@@ -50,9 +50,9 @@ public class PositionView implements Serializable {
     @Autowired
     private ShapefileService shapefileService;
 
-    private LazyDataModel<Position> positions;
+    private LazyDataModel<PositionEntity> positions;
 
-    private Position selected;
+    private PositionEntity selected;
 
     private MapModel markerModel;
 
@@ -65,12 +65,12 @@ public class PositionView implements Serializable {
     @PostConstruct
     public void init() {
         this.markerModel = new DefaultMapModel();
-        this.positions = new LazyDataModel<Position>() {
+        this.positions = new LazyDataModel<PositionEntity>() {
             @Override
-            public List<Position> load(int startingAt, int maxPerPage, String sortField, SortOrder sortOrder, Map<String, Object> filters) {
+            public List<PositionEntity> load(int startingAt, int maxPerPage, String sortField, SortOrder sortOrder, Map<String, Object> filters) {
                 final boolean ascending = (null != sortOrder ? SortOrder.ASCENDING.equals(sortOrder) : null);
                 final int currentPage = startingAt / maxPerPage;
-                final Page<Position> page;
+                final Page<PositionEntity> page;
                 final PageRequest pageRequest;
                 if (StringUtils.isNotBlank(sortField) && null != sortOrder) {
                     pageRequest = new PageRequest(currentPage, maxPerPage, new Sort(ascending ? Sort.Direction.ASC : Sort.Direction.DESC, sortField));
@@ -84,20 +84,20 @@ public class PositionView implements Serializable {
                     page = PositionView.this.positionRepository.findAll(PositionPredicate.predicate(), pageRequest);
                     PositionView.this.positions.setRowCount(Long.valueOf(PositionView.this.positionRepository.count(PositionPredicate.predicate())).intValue());
                 }
-                final List<Position> result = new LinkedList<>();
-                for (Position curCoordinate : page) {
+                final List<PositionEntity> result = new LinkedList<>();
+                for (PositionEntity curCoordinate : page) {
                     result.add(curCoordinate);
                 }
                 return result;
             }
 
             @Override
-            public Position getRowData(String rowKey) {
+            public PositionEntity getRowData(String rowKey) {
                 return PositionView.this.positionRepository.findOne(Long.valueOf(rowKey));
             }
 
             @Override
-            public Object getRowKey(Position product) {
+            public Object getRowKey(PositionEntity product) {
                 return product.getId();
             }
         };
@@ -111,7 +111,7 @@ public class PositionView implements Serializable {
     }
 
     public void onRowSelect(SelectEvent event) {
-        this.selected = (Position) event.getObject();
+        this.selected = (PositionEntity) event.getObject();
         this.selectedImageURL = null;
         this.getMarkerModel().getMarkers().clear();
         if (null != this.selected && null != this.selected.getLatitude() && null != this.selected.getLongitude()) {
@@ -126,8 +126,8 @@ public class PositionView implements Serializable {
         this.selected = null;
     }
 
-    public Position prepareCreate() {
-        this.selected = new Position();
+    public PositionEntity prepareCreate() {
+        this.selected = new PositionEntity();
         return getSelected();
     }
 
@@ -141,14 +141,14 @@ public class PositionView implements Serializable {
      *
      * @return
      */
-    public LazyDataModel<Position> getPositions() {
+    public LazyDataModel<PositionEntity> getPositions() {
         return this.positions;
     }
 
     /**
      * @return the selected
      */
-    public Position getSelected() {
+    public PositionEntity getSelected() {
         return selected;
     }
 

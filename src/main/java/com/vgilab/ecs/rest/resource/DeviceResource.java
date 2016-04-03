@@ -1,14 +1,13 @@
-package com.vgilab.ecs.rest;
+package com.vgilab.ecs.rest.resource;
 
-import java.util.List;
 import javax.validation.constraints.NotNull;
 
 /**
  *
- * @author ljzhang
+ * @author smuellner
  */
-public class PositionBatchResource {
-
+public class DeviceResource {
+        
     @NotNull
     private String maker;
 
@@ -18,9 +17,7 @@ public class PositionBatchResource {
     private String software;
 
     private String source;
-
-    private List<PositionResource> positions;
-
+    
     /**
      * @return the maker
      */
@@ -76,19 +73,4 @@ public class PositionBatchResource {
     public void setSource(String source) {
         this.source = source;
     }
-
-    /**
-     * @return the positions
-     */
-    public List<PositionResource> getPositions() {
-        return positions;
-    }
-
-    /**
-     * @param positions the positions to set
-     */
-    public void setPositions(List<PositionResource> positions) {
-        this.positions = positions;
-    }
-    
 }

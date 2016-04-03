@@ -2,7 +2,7 @@ package com.vgilab.ecs.persistence.predicates;
 
 import com.mysema.query.BooleanBuilder;
 import com.mysema.query.types.Predicate;
-import com.vgilab.ecs.persistence.entity.QPosition;
+import com.vgilab.ecs.persistence.entity.QPositionEntity;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -30,17 +30,17 @@ public class PositionPredicate {
         if (StringUtils.isNotBlank(averageAltitude)) {
             where.and(averageAltitudeContains(Double.valueOf(averageAltitude)));
         }
-        where.and(QPosition.position.latitude.isNotNull());
-        where.and(QPosition.position.longitude.isNotNull());
-        where.and(QPosition.position.averageAltitude.isNotNull());
+        where.and(QPositionEntity.positionEntity.latitude.isNotNull());
+        where.and(QPositionEntity.positionEntity.longitude.isNotNull());
+        where.and(QPositionEntity.positionEntity.averageAltitude.isNotNull());
         return where;
     }
     
     
     public static Predicate predicate() {
         final BooleanBuilder where = new BooleanBuilder();
-        where.and(QPosition.position.latitude.isNotNull());
-        where.and(QPosition.position.longitude.isNotNull());
+        where.and(QPositionEntity.positionEntity.latitude.isNotNull());
+        where.and(QPositionEntity.positionEntity.longitude.isNotNull());
         return where;
     }
     
@@ -50,7 +50,7 @@ public class PositionPredicate {
      * @return
      */
     public static Predicate latitudeContains(Double latitude) {
-        final QPosition position = QPosition.position;
+        final QPositionEntity position = QPositionEntity.positionEntity;
         return position.latitude.eq(latitude);
     }
     
@@ -60,7 +60,7 @@ public class PositionPredicate {
      * @return
      */
     public static Predicate longitudeContains(Double longitude) {
-        final QPosition position = QPosition.position;
+        final QPositionEntity position = QPositionEntity.positionEntity;
         return position.longitude.eq(longitude);
     }
     
@@ -70,7 +70,7 @@ public class PositionPredicate {
      * @return
      */
     public static Predicate averageAltitudeContains(Double averageAltitude) {
-        final QPosition position = QPosition.position;
+        final QPositionEntity position = QPositionEntity.positionEntity;
         return position.averageAltitude.eq(averageAltitude);
     }
 

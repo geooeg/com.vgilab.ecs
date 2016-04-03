@@ -1,12 +1,14 @@
 package com.vgilab.ecs.rest;
 
+import com.vgilab.ecs.rest.resource.PositionBatchResource;
 import com.vgilab.ecs.mapper.PositionBatchModelMapper;
 import com.vgilab.ecs.mapper.PositionModelMapper;
-import com.vgilab.ecs.persistence.entity.Position;
-import com.vgilab.ecs.persistence.entity.PositionInTime;
-import com.vgilab.ecs.persistence.repositories.PositionInTimeRepository;
+import com.vgilab.ecs.persistence.entity.PositionEntity;
+import com.vgilab.ecs.persistence.entity.PositionInTimeEntity;
+import com.vgilab.ecs.persistence.entity.TripEntity;
 import com.vgilab.ecs.persistence.repositories.PositionRepository;
-import java.util.Calendar;
+import com.vgilab.ecs.persistence.repositories.TripRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,49 +30,52 @@ public class PositionController {
 
     private final PositionRepository positionRepository;
 
-    private final PositionInTimeRepository positionInTimeRepository;
+    private final TripRepository tripRepository;
 
     @Autowired
-    public PositionController(PositionRepository positionRepository, PositionInTimeRepository positionInTimeRepository) {
+    public PositionController(PositionRepository positionRepository, TripRepository tripRepository) {
         this.positionRepository = positionRepository;
-        this.positionInTimeRepository = positionInTimeRepository;
+        this.tripRepository = tripRepository;
     }
 
     @RequestMapping(value = "/positions", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PositionBatchResource> submitPositions(@RequestBody PositionBatchResource positionBatch) {
         if (null != positionBatch && null != positionBatch.getPositions()) {
-            try {
-                final ModelMapper positionBatchResourceToPositionInTimeEntityModellMapper = PositionBatchModelMapper.getResourceToPositionInTimeEntityModellMapper();
-                final ModelMapper positionResourceToPositionInTimeEntityModellMapper = PositionModelMapper.getResourceToPositionInTimeEntityModellMapper();
-                final ModelMapper positionResourceToPositionEntityModellMapper = PositionModelMapper.getResourceToPositionEntityModellMapper();
-                positionBatch.getPositions().stream().filter(curPositionDto -> null != curPositionDto.getAltitude()).map((curPositionDto) -> {
-                    Position position = this.positionRepository.findByLongitudeAndLatitude(curPositionDto.getLongitude(), curPositionDto.getLatitude());
-                    if (null != position) {
-                        Double averageAltitude = 0d;
-                        for( final PositionInTime curPositionInTime : position.getPositionsInTime()) {
-                            averageAltitude += curPositionInTime.getAltitude();
+            final String tripId = positionBatch.getTripId();
+            if (StringUtils.isNotEmpty(tripId) && this.tripRepository.exists(tripId)) {
+                final TripEntity tripEntity = this.tripRepository.findOne(tripId);
+                try {
+                    final ModelMapper positionBatchResourceToPositionInTimeEntityModellMapper = PositionBatchModelMapper.getResourceToPositionInTimeEntityModellMapper();
+                    final ModelMapper positionResourceToPositionInTimeEntityModellMapper = PositionModelMapper.getResourceToPositionInTimeEntityModellMapper();
+                    final ModelMapper positionResourceToPositionEntityModellMapper = PositionModelMapper.getResourceToPositionEntityModellMapper();
+                    positionBatch.getPositions().stream().filter(curPositionDto -> null != curPositionDto.getAltitude()).map((curPositionDto) -> {
+                        PositionEntity position = this.positionRepository.findByLongitudeAndLatitude(curPositionDto.getLongitude(), curPositionDto.getLatitude());
+                        if (null != position) {
+                            Double averageAltitude = 0d;
+                            for (final PositionInTimeEntity curPositionInTime : position.getPositionsInTime()) {
+                                averageAltitude += curPositionInTime.getAltitude();
+                            }
+                            averageAltitude += curPositionDto.getAltitude();
+                            position.setAverageAltitude(averageAltitude / (position.getPositionsInTime().size() + 1));
+                        } else {
+                            position = new PositionEntity();
+                            position.setAverageAltitude(curPositionDto.getAltitude());
+                            positionResourceToPositionEntityModellMapper.map(curPositionDto, position);
                         }
-                        averageAltitude += curPositionDto.getAltitude();
-                        position.setAverageAltitude(averageAltitude / (position.getPositionsInTime().size() + 1));
-                    } else {
-                        position = new Position();
-                        position.setCreatedOn(Calendar.getInstance());
-                        position.setAverageAltitude(curPositionDto.getAltitude());
-                        positionResourceToPositionEntityModellMapper.map(curPositionDto, position);
-                    }
-                    position.setModifiedOn(Calendar.getInstance());
-                    final PositionInTime positionInTime = new PositionInTime();
-                    positionInTime.setPosition(position);
-                    positionBatchResourceToPositionInTimeEntityModellMapper.map(positionBatch, positionInTime);
-                    positionResourceToPositionInTimeEntityModellMapper.map(curPositionDto, positionInTime);
-                    positionInTime.setCreatedOn(Calendar.getInstance());
-                    // this.positionInTimeRepository.save(positionInTime);
-                    position.getPositionsInTime().add(positionInTime);
-                    return this.positionRepository.save(position);
-                }).forEach((position) -> {
-                });
-            } catch (Exception ex) {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                        final PositionInTimeEntity positionInTime = new PositionInTimeEntity();
+                        positionInTime.setPosition(position);
+                        positionInTime.setTrip(tripEntity);
+                        positionBatchResourceToPositionInTimeEntityModellMapper.map(positionBatch, positionInTime);
+                        positionResourceToPositionInTimeEntityModellMapper.map(curPositionDto, positionInTime);
+                        position.getPositionsInTime().add(positionInTime);
+                        return this.positionRepository.save(position);
+                    }).forEach((position) -> {
+                    });
+                } catch (Exception ex) {
+                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                }
+            } else {
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             }
         } else {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

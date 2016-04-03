@@ -1,20 +1,18 @@
 package com.vgilab.ecs.persistence.repositories;
 
-import com.vgilab.ecs.persistence.entity.PositionInTimeEntity;
+import com.vgilab.ecs.persistence.entity.TripEntity;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.stereotype.Repository;
 
 /**
  *
- * @author ljzhang
+ * @author smuellner
  */
-@Repository
-public interface PositionInTimeRepository extends PagingAndSortingRepository<PositionInTimeEntity, Long>, QueryDslPredicateExecutor<PositionInTimeEntity>  {
+public interface TripRepository extends PagingAndSortingRepository<TripEntity, String>, QueryDslPredicateExecutor<TripEntity>  {
 
     /**
      *
@@ -22,15 +20,15 @@ public interface PositionInTimeRepository extends PagingAndSortingRepository<Pos
      * @return
      */
     @Override
-    public PositionInTimeEntity findOne(Long id);
-    
+    public TripEntity findOne(String id);
+
     /**
      *
      * @param sort
      * @return
      */
     @Override
-    public Iterable<PositionInTimeEntity> findAll(Sort sort);
+    public Iterable<TripEntity> findAll(Sort sort);
 
     /**
      *
@@ -38,14 +36,14 @@ public interface PositionInTimeRepository extends PagingAndSortingRepository<Pos
      * @return
      */
     @Override
-    public Page<PositionInTimeEntity> findAll(Pageable pgbl);
+    public Page<TripEntity> findAll(Pageable pgbl);
 
     /**
      *
      * @return
      */
     @Override
-    public List<PositionInTimeEntity> findAll();
+    public List<TripEntity> findAll();
 
     /**
      *
@@ -53,7 +51,7 @@ public interface PositionInTimeRepository extends PagingAndSortingRepository<Pos
      * @return
      */
     @Override
-    public PositionInTimeEntity save(PositionInTimeEntity persisted);
+    public TripEntity save(TripEntity persisted);
 
     /**
      *
@@ -61,7 +59,7 @@ public interface PositionInTimeRepository extends PagingAndSortingRepository<Pos
      * @return
      */
     @Override
-    public boolean exists(Long id);
+    public boolean exists(String id);
 
     /**
      *

@@ -1,7 +1,5 @@
 package com.vgilab.ecs.persistence.entity;
 
-import java.io.Serializable;
-import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -13,8 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 /**
  *
@@ -22,7 +18,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "positions")
-public class Position implements Serializable {
+public class PositionEntity extends BaseEntity<Long> {
 
     private static final long serialVersionUID = 12L;
 
@@ -40,30 +36,20 @@ public class Position implements Serializable {
     private Double averageAltitude;
     
     @OneToMany(mappedBy="position", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<PositionInTime> positionsInTime = new LinkedList<>();
+    private List<PositionInTimeEntity> positionsInTime = new LinkedList<>();
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_on", nullable = false)
-    private Calendar createdOn;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "modified_on", nullable = true)
-    private Calendar modifiedOn;
-
-    /**
-     * @return the id
-     */
+    @Override
     public Long getId() {
-        return id;
+        return this.id;
     }
-
+    
     /**
      * @param id the id to set
      */
     public void setId(Long id) {
         this.id = id;
     }
-
+    
     /**
      * @return the longitude
      */
@@ -109,48 +95,21 @@ public class Position implements Serializable {
     /**
      * @return the positionsInTime
      */
-    public List<PositionInTime> getPositionsInTime() {
+    public List<PositionInTimeEntity> getPositionsInTime() {
         return positionsInTime;
     }
 
     /**
      * @param positionsInTime the positionsInTime to set
      */
-    public void setPositionsInTime(List<PositionInTime> positionsInTime) {
+    public void setPositionsInTime(List<PositionInTimeEntity> positionsInTime) {
         this.positionsInTime = positionsInTime;
     }
-
-    /**
-     * @return the createdOn
-     */
-    public Calendar getCreatedOn() {
-        return createdOn;
-    }
-
-    /**
-     * @param createdOn the createdOn to set
-     */
-    public void setCreatedOn(Calendar createdOn) {
-        this.createdOn = createdOn;
-    }
-
-    /**
-     * @return the modifiedOn
-     */
-    public Calendar getModifiedOn() {
-        return modifiedOn;
-    }
-
-    /**
-     * @param modifiedOn the modifiedOn to set
-     */
-    public void setModifiedOn(Calendar modifiedOn) {
-        this.modifiedOn = modifiedOn;
-    }
-
+    
     @Override
     public String toString() {
         return "com.vgilab.ecs.persistence.entity.Position[ id=" + getId() + " ]";
     }
+
 
 }

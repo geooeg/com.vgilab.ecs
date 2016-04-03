@@ -8,9 +8,15 @@
       <property name="javax.persistence.jdbc.user" value="ecs"/>
       <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
       <property name="javax.persistence.jdbc.password" value="YOUR_SECURE_PASSWORD"/>
+      <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
     </properties>
-    <class>com.vgilab.ecs.persistence.entity.Position</class>
-    <class>com.vgilab.ecs.persistence.entity.PositionInTime</class>
+    <class>com.vgilab.ecs.persistence.entity.TripEntity</class>
+    <class>com.vgilab.ecs.persistence.entity.DeviceEntity</class>
+    <class>com.vgilab.ecs.persistence.entity.PositionEntity</class>
+    <class>com.vgilab.ecs.persistence.entity.PositionInTimeEntity</class>
+    <class>com.vgilab.ecs.persistence.entity.UserEntity</class>
+    <class>com.vgilab.ecs.persistence.entity.BaseEntity</class>
+    <class>com.vgilab.ecs.persistence.entity.AuthorizationCodeEntity</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
   </persistence-unit>
 </persistence>

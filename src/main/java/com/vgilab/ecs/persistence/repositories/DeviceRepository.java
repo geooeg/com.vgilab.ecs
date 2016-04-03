@@ -1,6 +1,6 @@
 package com.vgilab.ecs.persistence.repositories;
 
-import com.vgilab.ecs.persistence.entity.PositionInTimeEntity;
+import com.vgilab.ecs.persistence.entity.DeviceEntity;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,18 +11,18 @@ import org.springframework.stereotype.Repository;
 
 /**
  *
- * @author ljzhang
+ * @author smuellner
  */
 @Repository
-public interface PositionInTimeRepository extends PagingAndSortingRepository<PositionInTimeEntity, Long>, QueryDslPredicateExecutor<PositionInTimeEntity>  {
-
+public interface DeviceRepository extends PagingAndSortingRepository<DeviceEntity, String>, QueryDslPredicateExecutor<DeviceEntity>  {
+   
     /**
      *
      * @param id
      * @return
      */
     @Override
-    public PositionInTimeEntity findOne(Long id);
+    public DeviceEntity findOne(String id);
     
     /**
      *
@@ -30,7 +30,7 @@ public interface PositionInTimeRepository extends PagingAndSortingRepository<Pos
      * @return
      */
     @Override
-    public Iterable<PositionInTimeEntity> findAll(Sort sort);
+    public Iterable<DeviceEntity> findAll(Sort sort);
 
     /**
      *
@@ -38,14 +38,14 @@ public interface PositionInTimeRepository extends PagingAndSortingRepository<Pos
      * @return
      */
     @Override
-    public Page<PositionInTimeEntity> findAll(Pageable pgbl);
+    public Page<DeviceEntity> findAll(Pageable pgbl);
 
     /**
      *
      * @return
      */
     @Override
-    public List<PositionInTimeEntity> findAll();
+    public List<DeviceEntity> findAll();
 
     /**
      *
@@ -53,7 +53,7 @@ public interface PositionInTimeRepository extends PagingAndSortingRepository<Pos
      * @return
      */
     @Override
-    public PositionInTimeEntity save(PositionInTimeEntity persisted);
+    public DeviceEntity save(DeviceEntity persisted);
 
     /**
      *
@@ -61,7 +61,7 @@ public interface PositionInTimeRepository extends PagingAndSortingRepository<Pos
      * @return
      */
     @Override
-    public boolean exists(Long id);
+    public boolean exists(String id);
 
     /**
      *

@@ -1,8 +1,10 @@
 package com.vgilab.ecs.rest;
 
+import com.vgilab.ecs.rest.resource.PositionResource;
+import com.vgilab.ecs.rest.resource.PositionBatchResource;
 import com.google.gson.Gson;
-import com.vgilab.ecs.persistence.repositories.PositionInTimeRepository;
 import com.vgilab.ecs.persistence.repositories.PositionRepository;
+import com.vgilab.ecs.persistence.repositories.TripRepository;
 import java.util.LinkedList;
 import java.util.List;
 import org.junit.After;
@@ -35,9 +37,10 @@ public class PositionBatchUnitTest {
 
     @Autowired
     private PositionRepository positionRepository;
-
+    
     @Autowired
-    private PositionInTimeRepository positionInTimeRepository;
+    private TripRepository tripRepository;
+
 
     public PositionBatchUnitTest() {
     }
@@ -52,7 +55,7 @@ public class PositionBatchUnitTest {
 
     @Before
     public void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(new PositionController(positionRepository, positionInTimeRepository)).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new PositionController(positionRepository, tripRepository)).build();
         final List<PositionResource> positions = new LinkedList<>();
         for (int i = 1; i < 4; i++) {
             final PositionResource positionResource = new PositionResource();
@@ -63,9 +66,6 @@ public class PositionBatchUnitTest {
             positions.add(positionResource);
         }
         mockedPositionBatchResource = new PositionBatchResource();
-        mockedPositionBatchResource.setMaker("Apple");
-        mockedPositionBatchResource.setModel("iPhone 5s");
-        mockedPositionBatchResource.setSoftware("iOS 9.1");
         mockedPositionBatchResource.setPositions(positions);
     }
 

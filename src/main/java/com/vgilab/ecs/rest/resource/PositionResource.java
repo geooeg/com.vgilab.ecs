@@ -1,4 +1,4 @@
-package com.vgilab.ecs.rest;
+package com.vgilab.ecs.rest.resource;
 
 import javax.validation.constraints.NotNull;
 
