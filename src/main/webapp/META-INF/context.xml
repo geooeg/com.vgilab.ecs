@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Context path="/ecs"/>
+<Context antiJARLocking="${web.context.antiJARLocking}" antiResourceLocking="${web.context.antiResourceLocking}" path="" reloadable="${web.context.reloadable}" unloadDelay="10000"/>

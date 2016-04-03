@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <name>Elevation Collection Service</name>
     <groupId>com.vgilab</groupId>
-    <artifactId>com.vgilab.ecs</artifactId>
+    <artifactId>ecs</artifactId>
     <version>1.1-SNAPSHOT</version>
     <packaging>war</packaging>
     
@@ -18,6 +18,41 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+    
+    <profiles>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <project.finalName>ROOT</project.finalName>
+                <db.driverClassName>org.postgresql.Driver</db.driverClassName>
+                <db.jdbcUrl>jdbc:postgresql://localhost:5432/ecsdb</db.jdbcUrl>
+                <db.username>ecs</db.username>
+                <db.password>YOUR_SECURE_PASSWORD</db.password>
+                <web.context></web.context>
+                <web.context.reloadable>false</web.context.reloadable>
+                <web.context.antiJARLocking>false</web.context.antiJARLocking>
+                <web.context.antiResourceLocking>false</web.context.antiResourceLocking>
+            </properties>
+        </profile>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <envClassifier>dev</envClassifier>
+                <project.finalName>ecs</project.finalName>
+                <db.driverClassName>org.postgresql.Driver</db.driverClassName>
+                <db.jdbcUrl>jdbc:postgresql://localhost:5433/ecsdb</db.jdbcUrl>
+                <db.username>ecs</db.username>
+                <db.password>YOUR_SECURE_PASSWORD</db.password>
+                <web.context>/ecs</web.context>
+                <web.context.reloadable>true</web.context.reloadable>
+                <web.context.antiJARLocking>true</web.context.antiJARLocking>
+                <web.context.antiResourceLocking>true</web.context.antiResourceLocking>
+            </properties>
+        </profile>
+    </profiles>
 
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
@@ -150,15 +185,6 @@
             <version>2.6.2</version>
             <type>jar</type>
         </dependency>
-        <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>org.eclipse.persistence.jpa.modelgen.processor</artifactId>
-            <version>2.6.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>javax.persistence</artifactId>
-        </dependency>
         
         <!-- Database JDBC Driver -->
         <dependency>
@@ -231,7 +257,6 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>1.3.2</version>
         </dependency>
         <dependency>
             <groupId>com.jayway.jsonpath</groupId>
@@ -243,7 +268,6 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
-            <version>4.10</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -267,6 +291,7 @@
     </dependencies>
 
     <build>
+        <finalName>${project.finalName}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -278,15 +303,6 @@
                     <compilerArguments>
                         <endorseddirs>${endorsed.dir}</endorseddirs>
                     </compilerArguments>
-                </configuration>
-            </plugin>
-            
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.6</version>
-                <configuration>
-                    <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
             
@@ -340,11 +356,25 @@
                 <artifactId>tomcat7-maven-plugin</artifactId>
                 <version>2.2</version>
                 <configuration>
-                    <path>/ecs</path>
+                    <path>${web.context}</path>
                 </configuration>
             </plugin>
             
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>${basedir}/src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
     </build>
     
     <repositories>
