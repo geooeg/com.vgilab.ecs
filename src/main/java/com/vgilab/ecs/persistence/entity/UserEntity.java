@@ -8,9 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -20,13 +17,9 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "users")
-public class UserEntity extends BaseEntity<String> {
+public class UserEntity extends UuidEntity {
 
     private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private String id;
 
     @Column(name = "email", length = 100, nullable = false, unique = true)
     private String email;
@@ -52,15 +45,6 @@ public class UserEntity extends BaseEntity<String> {
     
     @OneToMany(mappedBy="user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<DeviceEntity> devices = new LinkedList<>();
-
-
-    /**
-     * @return the id
-     */
-    @Override
-    public String getId() {
-        return id;
-    }
 
     /**
      * @return the email
@@ -146,23 +130,6 @@ public class UserEntity extends BaseEntity<String> {
         this.devices = devices;
     }
     
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (getId() != null ? getId().hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof UserEntity)) {
-            return false;
-        }
-        UserEntity other = (UserEntity) object;
-        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
-    }
-
     @Override
     public String toString() {
         return "com.vgilab.ecs.persistence.entity.User[ id=" + getId() + " ]";

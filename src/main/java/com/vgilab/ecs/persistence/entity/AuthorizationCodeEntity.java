@@ -3,9 +3,6 @@ package com.vgilab.ecs.persistence.entity;
 import java.util.Calendar;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -17,21 +14,13 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "authorization_codes")
-public class AuthorizationCodeEntity extends BaseEntity<String> {
+public class AuthorizationCodeEntity extends UuidEntity {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private String id;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "valid_until_time", nullable = false)
     private Calendar validUntilTime;
-
-    @Override
-    public String getId() {
-        return id;
-    }
 
     /**
      * @return the validUntilTime
@@ -48,24 +37,8 @@ public class AuthorizationCodeEntity extends BaseEntity<String> {
     }
         
     @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof AuthorizationCodeEntity)) {
-            return false;
-        }
-        AuthorizationCodeEntity other = (AuthorizationCodeEntity) object;
-        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
-    }
-
-    @Override
     public String toString() {
-        return "com.vgilab.ecs.persistence.entity.AuthorizationCodeEntity[ id=" + id + " ]";
+        return "com.vgilab.ecs.persistence.entity.AuthorizationCodeEntity[ id=" + this.getId() + " ]";
     }
 
     @PrePersist

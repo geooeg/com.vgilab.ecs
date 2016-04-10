@@ -37,6 +37,9 @@ public class PositionInTimeEntity extends BaseEntity<Long> {
     @Column(name = "altitude")
     private Double altitude;
     
+    @Column(name = "altitude_accuracy")
+    private Double altitudeAccuracy;
+    
     @Column(name = "horizontal_accuracy")
     private Double horizontalAccuracy;
    
@@ -108,6 +111,20 @@ public class PositionInTimeEntity extends BaseEntity<Long> {
      */
     public void setAltitude(Double altitude) {
         this.altitude = altitude;
+    }
+
+    /**
+     * @return the altitudeAccuracy
+     */
+    public Double getAltitudeAccuracy() {
+        return altitudeAccuracy;
+    }
+
+    /**
+     * @param altitudeAccuracy the altitudeAccuracy to set
+     */
+    public void setAltitudeAccuracy(Double altitudeAccuracy) {
+        this.altitudeAccuracy = altitudeAccuracy;
     }
 
     /**

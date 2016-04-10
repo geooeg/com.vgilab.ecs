@@ -24,6 +24,15 @@ public interface DeviceRepository extends PagingAndSortingRepository<DeviceEntit
     @Override
     public DeviceEntity findOne(String id);
     
+    
+    /**
+     *
+     * @param maker
+     * @param identifierForVendor
+     * @return
+     */
+    public DeviceEntity findByMakerAndIdentifierForVendor(String maker, String identifierForVendor);
+    
     /**
      *
      * @param sort

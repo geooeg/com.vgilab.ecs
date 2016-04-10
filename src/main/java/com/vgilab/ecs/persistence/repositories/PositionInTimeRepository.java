@@ -1,6 +1,7 @@
 package com.vgilab.ecs.persistence.repositories;
 
 import com.vgilab.ecs.persistence.entity.PositionInTimeEntity;
+import com.vgilab.ecs.persistence.entity.TripEntity;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PositionInTimeRepository extends PagingAndSortingRepository<PositionInTimeEntity, Long>, QueryDslPredicateExecutor<PositionInTimeEntity>  {
 
+    /**
+     *
+     * @param tripEntity
+     * @return
+     */
+    public List<PositionInTimeEntity> findByTripOrderByTrackedOnAsc(final TripEntity tripEntity);
+    
     /**
      *
      * @param id

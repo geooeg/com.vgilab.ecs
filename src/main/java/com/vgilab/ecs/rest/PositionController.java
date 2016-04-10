@@ -8,6 +8,7 @@ import com.vgilab.ecs.persistence.entity.PositionInTimeEntity;
 import com.vgilab.ecs.persistence.entity.TripEntity;
 import com.vgilab.ecs.persistence.repositories.PositionRepository;
 import com.vgilab.ecs.persistence.repositories.TripRepository;
+import java.util.Calendar;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +66,9 @@ public class PositionController {
                         final PositionInTimeEntity positionInTime = new PositionInTimeEntity();
                         positionInTime.setPosition(position);
                         positionInTime.setTrip(tripEntity);
+                        final Calendar trackedOn = Calendar.getInstance();
+                        trackedOn.setTimeInMillis(curPositionDto.getTrackedOn() * 1000);
+                        positionInTime.setTrackedOn(trackedOn);
                         positionBatchResourceToPositionInTimeEntityModellMapper.map(positionBatch, positionInTime);
                         positionResourceToPositionInTimeEntityModellMapper.map(curPositionDto, positionInTime);
                         position.getPositionsInTime().add(positionInTime);

@@ -7,9 +7,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -23,14 +20,10 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "trips")
-public class TripEntity extends BaseEntity<String> {
+public class TripEntity extends UuidEntity {
 
     private static final long serialVersionUID = 1L;
-    
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private String id;
-    
+        
     @ManyToOne
     @JoinColumn(name = "device_id")
     private DeviceEntity device;
@@ -46,17 +39,9 @@ public class TripEntity extends BaseEntity<String> {
     private Calendar startedOn;
     
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "stoppedOn", nullable = false)
+    @Column(name = "stoppedOn", nullable = true)
     private Calendar stoppedOn;
         
-    /**
-     * @return the id
-     */
-    @Override
-    public String getId() {
-        return id;
-    }
-
     /**
      * @return the device
      */
@@ -127,23 +112,6 @@ public class TripEntity extends BaseEntity<String> {
         this.stoppedOn = stoppedOn;
     }
     
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (getId() != null ? getId().hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof TripEntity)) {
-            return false;
-        }
-        TripEntity other = (TripEntity) object;
-        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
-    }
-
     @Override
     public String toString() {
         return "com.vgilab.ecs.persistence.entity.TripEntity[ id=" + getId() + " ]";

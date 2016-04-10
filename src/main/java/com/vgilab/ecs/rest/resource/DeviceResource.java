@@ -8,6 +8,8 @@ import javax.validation.constraints.NotNull;
  */
 public class DeviceResource {
         
+    private String IdentifierForVendor;
+    
     @NotNull
     private String maker;
 
@@ -17,6 +19,20 @@ public class DeviceResource {
     private String software;
 
     private String source;
+       
+    /**
+     * @return the IdentifierForVendor
+     */
+    public String getIdentifierForVendor() {
+        return IdentifierForVendor;
+    }
+
+    /**
+     * @param IdentifierForVendor the IdentifierForVendor to set
+     */
+    public void setIdentifierForVendor(String IdentifierForVendor) {
+        this.IdentifierForVendor = IdentifierForVendor;
+    }
     
     /**
      * @return the maker

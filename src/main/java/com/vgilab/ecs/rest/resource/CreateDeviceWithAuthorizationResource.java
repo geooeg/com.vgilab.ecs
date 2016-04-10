@@ -6,7 +6,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author smuellner
  */
-public class DeviceWithAuthorizationResource extends DeviceResource {
+public class CreateDeviceWithAuthorizationResource extends DeviceResource {
     
     @NotNull
     private String authorizationCode;

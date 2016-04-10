@@ -1,20 +1,15 @@
 package com.vgilab.ecs.rest;
 
-import com.vgilab.ecs.mapper.DeviceModelMapper;
-import com.vgilab.ecs.persistence.entity.AuthorizationCodeEntity;
 import com.vgilab.ecs.persistence.entity.DeviceEntity;
 import com.vgilab.ecs.persistence.entity.TripEntity;
 import com.vgilab.ecs.persistence.repositories.DeviceRepository;
 import com.vgilab.ecs.persistence.repositories.TripRepository;
 import com.vgilab.ecs.rest.resource.StopTripResource;
 import com.vgilab.ecs.rest.resource.CreateTripResource;
-import com.vgilab.ecs.rest.resource.DeviceWithAuthorizationResource;
 import com.vgilab.ecs.rest.response.StopTripResponse;
 import com.vgilab.ecs.rest.response.CreateTripResponse;
-import com.vgilab.ecs.rest.response.DeviceWithAuthorizationResponse;
 import java.util.Calendar;
 import org.apache.commons.lang3.StringUtils;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -55,10 +50,7 @@ public class TripController {
                 tripEntity = this.tripRepository.save(tripEntity);
                 createTripResponse.setTripId(tripEntity.getId());
             } else {
-                TripEntity tripEntity = new TripEntity();
-                tripEntity = this.tripRepository.save(tripEntity);
-                createTripResponse.setTripId(tripEntity.getId());
-                // return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             }
         } else {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -67,19 +59,20 @@ public class TripController {
     }
 
     @RequestMapping(value = "/stop_trip", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<StopTripResponse> stopTrip(@RequestBody StopTripResource deviceWithAuthorizationResource) {
-        if (null != deviceWithAuthorizationResource) {
-            final String tripId = deviceWithAuthorizationResource.getTripId();
+    public ResponseEntity<StopTripResponse> stopTrip(@RequestBody StopTripResource stopTripResource) {
+        final StopTripResponse stopTripResponse = new StopTripResponse();
+        if (null != stopTripResource) {
+            final String tripId = stopTripResource.getTripId();
             if (StringUtils.isNotEmpty(tripId) && this.tripRepository.exists(tripId)) {
                 final TripEntity tripEntity = this.tripRepository.findOne(tripId);
                 tripEntity.setStoppedOn(Calendar.getInstance());
-                tripRepository.save(tripEntity);
+                this.tripRepository.save(tripEntity);
             } else {
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             }
         } else {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(stopTripResponse, HttpStatus.OK);
     }
 }

@@ -6,7 +6,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author smuellner
  */
-public class DeviceWithAuthorizationResponse {
+public class CreateDeviceResponse {
     
     @NotNull
     private String deviceId;

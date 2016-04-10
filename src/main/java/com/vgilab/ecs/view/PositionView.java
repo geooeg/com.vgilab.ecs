@@ -2,6 +2,7 @@ package com.vgilab.ecs.view;
 
 import com.mysema.query.types.Predicate;
 import com.vgilab.ecs.persistence.entity.PositionEntity;
+import com.vgilab.ecs.persistence.entity.TripEntity;
 import com.vgilab.ecs.persistence.predicates.PositionPredicate;
 import com.vgilab.ecs.persistence.repositories.PositionRepository;
 import com.vgilab.ecs.service.ShapefileService;
@@ -51,7 +52,7 @@ public class PositionView implements Serializable {
     private ShapefileService shapefileService;
 
     private LazyDataModel<PositionEntity> positions;
-
+    
     private PositionEntity selected;
 
     private MapModel markerModel;
@@ -106,7 +107,7 @@ public class PositionView implements Serializable {
     private Predicate getCoordinatePredicate(Map<String, Object> filters) {
         final String latitude = filters.containsKey("latitude") ? String.valueOf(filters.get("latitude")) : null;
         final String longitude = filters.containsKey("longitude") ? String.valueOf(filters.get("longitude")) : null;
-        final String averageAltitude = filters.containsKey("averageAltitude") ? String.valueOf(filters.get("s")) : null;
+        final String averageAltitude = filters.containsKey("altitude") ? String.valueOf(filters.get("altitude")) : null;
         return PositionPredicate.predicateWithLocationAndDevice(latitude, longitude, averageAltitude);
     }
 

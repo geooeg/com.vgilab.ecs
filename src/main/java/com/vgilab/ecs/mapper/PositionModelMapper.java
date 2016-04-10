@@ -32,6 +32,7 @@ public class PositionModelMapper {
             @Override
             protected void configure() {
                 this.skip().setId(null);
+                this.skip().setTrackedOn(null);
             }
         });
         return modelMapper;
