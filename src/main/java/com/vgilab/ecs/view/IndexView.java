@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -63,7 +62,7 @@ public class IndexView implements Serializable {
                 if (StringUtils.isNotBlank(sortField) && null != sortOrder) {
                     pageRequest = new PageRequest(currentPage, maxPerPage, new Sort(ascending ? Sort.Direction.ASC : Sort.Direction.DESC, sortField));
                 } else {
-                    pageRequest = new PageRequest(currentPage, maxPerPage);
+                    pageRequest = new PageRequest(currentPage, maxPerPage, new Sort(Sort.Direction.DESC, "startedOn").and(new Sort(Sort.Direction.DESC, "stoppedOn")));
                 }
                 page = IndexView.this.tripRepository.findAll(pageRequest);
                 IndexView.this.trips.setRowCount(Long.valueOf(IndexView.this.tripRepository.count()).intValue());

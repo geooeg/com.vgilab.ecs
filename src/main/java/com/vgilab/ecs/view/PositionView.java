@@ -2,7 +2,6 @@ package com.vgilab.ecs.view;
 
 import com.mysema.query.types.Predicate;
 import com.vgilab.ecs.persistence.entity.PositionEntity;
-import com.vgilab.ecs.persistence.entity.TripEntity;
 import com.vgilab.ecs.persistence.predicates.PositionPredicate;
 import com.vgilab.ecs.persistence.repositories.PositionRepository;
 import com.vgilab.ecs.service.ShapefileService;

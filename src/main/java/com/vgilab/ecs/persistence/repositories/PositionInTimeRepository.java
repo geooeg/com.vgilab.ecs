@@ -1,13 +1,16 @@
 package com.vgilab.ecs.persistence.repositories;
 
+import com.vgilab.ecs.persistence.dto.PositionInTimeDto;
 import com.vgilab.ecs.persistence.entity.PositionInTimeEntity;
 import com.vgilab.ecs.persistence.entity.TripEntity;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -17,6 +20,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PositionInTimeRepository extends PagingAndSortingRepository<PositionInTimeEntity, Long>, QueryDslPredicateExecutor<PositionInTimeEntity>  {
 
+    @Query("SELECT new com.vgilab.ecs.persistence.dto.PositionInTimeDto(p.position.longitude, p.position.latitude) FROM PositionInTimeEntity p WHERE p.trip = :trip AND p.position IS NOT NULL ORDER BY p.trackedOn ASC")
+    public List<PositionInTimeDto> findByTripAsPositionInTimeDto(@Param("trip") final TripEntity trip);
+    
     /**
      *
      * @param tripEntity

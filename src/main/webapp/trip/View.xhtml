@@ -11,30 +11,30 @@
         <p:dialog id="PositionsViewDlg" widgetVar="PositionsViewDialog" modal="false" resizable="false" appendTo="@(body)" header="#{bundle.ViewPositionsTitle}">
             <h:form id="PositionsViewForm">
                 <h:panelGroup id="display">
-                    <p:panelGrid columns="2" rendered="#{positionView.selected != null}">
+                    <p:panelGrid columns="2" rendered="#{tripView.selected != null}">
 
                         <h:outputText value="#{bundle.Latitude}"/>
-                        <h:outputText value="#{positionView.selected.latitude}"/>
+                        <h:outputText value="#{tripView.selected.position.latitude}"/>
                         <h:outputText value="#{bundle.Longitude}"/>
-                        <h:outputText value="#{positionView.selected.longitude}"/>
+                        <h:outputText value="#{tripView.selected.position.longitude}"/>
                         <h:outputText value="#{bundle.AverageAltitude}"/>
-                        <h:outputText value="#{positionView.selected.averageAltitude}"/>
+                        <h:outputText value="#{tripView.selected.altitude}"/>
                         <h:outputText value="#{bundle.ModifiedOn}"/>
-                        <h:outputText value="#{positionView.selected.modificationTime.time}">
+                        <h:outputText value="#{tripView.selected.modificationTime.time}">
                             <f:convertDateTime type="both" dateStyle="long" />
                         </h:outputText>
 
-<!--                        <h:outputText value="#{bundle.Maker}"/>
-                        <h:outputText value="#{positionView.selected.maker}"/>
+                        <h:outputText value="#{bundle.Maker}"/>
+                        <h:outputText value="#{tripView.selected.trip.device.maker}"/>
                         <h:outputText value="#{bundle.Model}"/>
-                        <h:outputText value="#{positionView.selected.model}"/>
+                        <h:outputText value="#{tripView.selected.trip.device.model}"/>
                         <h:outputText value="#{bundle.Software}"/>
-                        <h:outputText value="#{positionView.selected.software}"/>
+                        <h:outputText value="#{tripView.selected.trip.device.software}"/>
                         <h:outputText value="#{bundle.Source}"/>
-                        <h:outputText value="#{positionView.selected.source}"/>-->
+                        <h:outputText value="#{tripView.selected.trip.device.source}"/>
                         
                         <h:outputText value="#{bundle.Position}"/>
-                        <p:gmap id="gmap-#{positionView.selected.id}"  model="#{positionView.markerModel}" center="#{positionView.center}" zoom="13" type="HYBRID" style="width:320px;height:320px"></p:gmap>  
+                        <p:gmap id="gmap-#{tripView.selected.id}" center="#{tripView.center}" zoom="13" type="HYBRID" style="width:320px;height:320px"></p:gmap>  
                     </p:panelGrid>
 
                     <p:commandButton value="#{bundle.Close}" onclick="PositionsViewDialog.hide()"/>

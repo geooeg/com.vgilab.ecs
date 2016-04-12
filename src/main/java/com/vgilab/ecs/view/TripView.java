@@ -1,7 +1,7 @@
 package com.vgilab.ecs.view;
 
 import com.mysema.query.types.Predicate;
-import com.vgilab.ecs.persistence.entity.PositionEntity;
+import com.vgilab.ecs.persistence.dto.PositionInTimeDto;
 import com.vgilab.ecs.persistence.entity.PositionInTimeEntity;
 import com.vgilab.ecs.persistence.entity.TripEntity;
 import com.vgilab.ecs.persistence.predicates.PositionInTimePredicate;
@@ -13,7 +13,6 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.bean.ViewScoped;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
@@ -45,7 +44,7 @@ public class TripView implements Serializable {
 
     private TripEntity trip;
 
-    private PositionEntity selected;
+    private PositionInTimeEntity selected;
 
     private MapModel tripModel;
 
@@ -67,7 +66,7 @@ public class TripView implements Serializable {
                 if (StringUtils.isNotBlank(sortField) && null != sortOrder) {
                     pageRequest = new PageRequest(currentPage, maxPerPage, new Sort(ascending ? Sort.Direction.ASC : Sort.Direction.DESC, sortField));
                 } else {
-                    pageRequest = new PageRequest(currentPage, maxPerPage);
+                    pageRequest = new PageRequest(currentPage, maxPerPage, new Sort(Sort.Direction.DESC, "trackedOn"));
                 }
                 if (null != filters && !filters.isEmpty()) {
                     page = TripView.this.positionInTimeRepository.findAll(TripView.this.getPositionPredicate(filters), pageRequest);
@@ -103,13 +102,13 @@ public class TripView implements Serializable {
     }
 
     public void onRowSelect(SelectEvent event) {
-        this.selected = (PositionEntity) event.getObject();
+        this.selected = (PositionInTimeEntity) event.getObject();
         this.selectedImageURL = null;
         this.tripModel.getMarkers().clear();
-        if (null != this.selected && null != this.selected.getLatitude() && null != this.selected.getLongitude()) {
-            final LatLng coord = new LatLng(this.selected.getLatitude(), this.selected.getLongitude());
+        if (null != this.selected && null != this.selected.getPosition().getLatitude() && null != this.selected.getPosition().getLongitude()) {
+            final LatLng coord = new LatLng(this.selected.getPosition().getLatitude(), this.selected.getPosition().getLongitude());
             final StringBuilder altitude = new StringBuilder();
-            altitude.append(null == this.selected.getAverageAltitude() ? "-" : this.selected.getAverageAltitude());
+            altitude.append(null == this.selected.getAltitude() ? "-" : this.selected.getAltitude());
             this.tripModel.addOverlay(new Marker(coord, altitude.toString(), "", "http://maps.google.com/mapfiles/ms/micons/blue-dot.png"));
         }
     }
@@ -129,29 +128,30 @@ public class TripView implements Serializable {
     /**
      * @return the selected
      */
-    public PositionEntity getSelected() {
+    public PositionInTimeEntity getSelected() {
         return selected;
     }
+
 
     /**
      * @return the center position
      */
     public String getCenter() {
-        return (null != this.selected && null != this.selected.getLatitude() && null != this.selected.getLongitude()) ? this.selected.getLatitude().toString() + "," + this.selected.getLongitude().toString() : "0.0,0.0";
+        return (null != this.selected && null != this.selected.getPosition().getLatitude() && null != this.selected.getPosition().getLongitude()) ? this.selected.getPosition().getLatitude().toString() + "," + this.selected.getPosition().getLongitude().toString() : "0.0,0.0";
     }
 
     /**
      * @return the markerModel
      */
     public MapModel getTripModel() {
-        if (this.tripModel == null) {
+        if (this.tripModel == null && this.trip != null) {
             this.tripModel = new DefaultMapModel();
-            final List<PositionInTimeEntity> positions = this.positionInTimeRepository.findByTripOrderByTrackedOnAsc(this.trip);
+            final List<PositionInTimeDto> positions = this.positionInTimeRepository.findByTripAsPositionInTimeDto(this.trip);
             final Polyline tripPolyline = new Polyline();
             tripPolyline.setStrokeWeight(1);
-            tripPolyline.setStrokeColor("green");
-            tripPolyline.setStrokeOpacity(0.7);
-            positions.stream().map((curPositionInTimeEntity) -> new LatLng(curPositionInTimeEntity.getPosition().getLatitude(), curPositionInTimeEntity.getPosition().getLongitude())).forEach((latLng) -> {
+            tripPolyline.setStrokeColor("blue");
+            tripPolyline.setStrokeOpacity(0.8);
+            positions.stream().map((curPositionInTimeEntity) -> new LatLng(curPositionInTimeEntity.getLatitude(), curPositionInTimeEntity.getLongitude())).forEach((latLng) -> {
                 tripPolyline.getPaths().add(latLng);
             });
             this.tripModel.addOverlay(tripPolyline);
