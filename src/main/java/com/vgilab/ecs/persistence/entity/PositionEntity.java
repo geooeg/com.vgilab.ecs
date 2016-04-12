@@ -35,7 +35,7 @@ public class PositionEntity extends BaseEntity<Long> {
     @Column(name = "average_altitude")
     private Double averageAltitude;
     
-    @OneToMany(mappedBy="position", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy="position", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PositionInTimeEntity> positionsInTime = new LinkedList<>();
 
     @Override

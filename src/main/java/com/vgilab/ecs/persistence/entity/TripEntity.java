@@ -31,7 +31,7 @@ public class TripEntity extends UuidEntity {
     @Column(name = "title")
     private String title;
 
-    @OneToMany(mappedBy="trip", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy="trip", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PositionInTimeEntity> positionsInTime = new LinkedList<>();
 
     @Temporal(TemporalType.TIMESTAMP)
