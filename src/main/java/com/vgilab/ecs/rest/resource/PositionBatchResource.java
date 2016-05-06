@@ -1,5 +1,6 @@
 package com.vgilab.ecs.rest.resource;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 
@@ -7,6 +8,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author ljzhang
  */
+@JsonIgnoreProperties(ignoreUnknown = true) 
 public class PositionBatchResource {
 
     @NotNull

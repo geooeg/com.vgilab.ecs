@@ -6,6 +6,7 @@ import com.vgilab.ecs.persistence.entity.PositionInTimeEntity;
 import com.vgilab.ecs.persistence.entity.TripEntity;
 import com.vgilab.ecs.persistence.predicates.PositionInTimePredicate;
 import com.vgilab.ecs.persistence.repositories.PositionInTimeRepository;
+import com.vgilab.ecs.persistence.repositories.TripRepository;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,6 +37,9 @@ import org.springframework.stereotype.Component;
 @ManagedBean(name = "tripView")
 @SessionScoped
 public class TripView implements Serializable {
+
+    @Autowired
+    private TripRepository tripRepository;
 
     @Autowired
     private PositionInTimeRepository positionInTimeRepository;
@@ -132,6 +136,17 @@ public class TripView implements Serializable {
         return selected;
     }
 
+    /**
+     *
+     * @return
+     */
+    public String deleteTrip() {
+        this.positionInTimeRepository.delete(this.trip.getPositionsInTime());
+        this.trip.getPositionsInTime().clear();
+        this.tripRepository.save(this.trip);
+        this.tripRepository.delete(this.trip);
+        return "index.xhtml?faces-redirect=true";
+    }
 
     /**
      * @return the center position

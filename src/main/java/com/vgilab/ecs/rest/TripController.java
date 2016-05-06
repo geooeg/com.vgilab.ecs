@@ -46,7 +46,7 @@ public class TripController {
                 final DeviceEntity deviceEntity = this.deviceRepository.findOne(deviceId);
                 TripEntity tripEntity = new TripEntity();
                 tripEntity.setDevice(deviceEntity);
-                tripEntity.setStartedOn(Calendar.getInstance());
+                tripEntity.setStartedOn(createTripResource.getStartTime() != null ? createTripResource.getStartTime() :  Calendar.getInstance());
                 tripEntity = this.tripRepository.save(tripEntity);
                 createTripResponse.setTripId(tripEntity.getId());
             } else {
@@ -65,7 +65,7 @@ public class TripController {
             final String tripId = stopTripResource.getTripId();
             if (StringUtils.isNotEmpty(tripId) && this.tripRepository.exists(tripId)) {
                 final TripEntity tripEntity = this.tripRepository.findOne(tripId);
-                tripEntity.setStoppedOn(Calendar.getInstance());
+                tripEntity.setStoppedOn(stopTripResource.getEndTime() != null ? stopTripResource.getEndTime() :  Calendar.getInstance());
                 this.tripRepository.save(tripEntity);
             } else {
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);

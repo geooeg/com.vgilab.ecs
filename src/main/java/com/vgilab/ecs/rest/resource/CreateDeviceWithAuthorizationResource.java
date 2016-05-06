@@ -1,11 +1,13 @@
 package com.vgilab.ecs.rest.resource;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.validation.constraints.NotNull;
 
 /**
  *
  * @author smuellner
  */
+@JsonIgnoreProperties(ignoreUnknown = true) 
 public class CreateDeviceWithAuthorizationResource extends DeviceResource {
     
     @NotNull

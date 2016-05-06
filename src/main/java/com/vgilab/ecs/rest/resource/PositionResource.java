@@ -1,33 +1,46 @@
 package com.vgilab.ecs.rest.resource;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.constraints.NotNull;
 
 /**
  *
  * @author ljzhang
  */
+@JsonIgnoreProperties(ignoreUnknown = true) 
 public class PositionResource {
-    
+
     @NotNull
+    @JsonProperty("x")
     private Double longitude;
 
     @NotNull
+    @JsonProperty("y")
     private Double latitude;
 
     @NotNull
+    @JsonProperty("z")
     private Double altitude;
-    
+
+    @JsonProperty("ha")
     private Double horizontalAccuracy;
-   
+
+    @JsonProperty("va")
     private Double verticalAccuracy;
-    
+
+    @JsonProperty("o")
     private Double direction;
-    
+
+    @JsonProperty("v")
     private Double speed;
+    
+    @JsonProperty("f")
+    private Integer floor;
 
     @NotNull
+    @JsonProperty("t")
     private Long trackedOn;
-
 
     /**
      * @return the longitude
@@ -139,5 +152,19 @@ public class PositionResource {
      */
     public void setTrackedOn(Long trackedOn) {
         this.trackedOn = trackedOn;
+    }
+
+    /**
+     * @return the floor
+     */
+    public Integer getFloor() {
+        return floor;
+    }
+
+    /**
+     * @param floor the floor to set
+     */
+    public void setFloor(Integer floor) {
+        this.floor = floor;
     }
 }

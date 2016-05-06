@@ -26,6 +26,10 @@
         <p:dialog widgetVar="statusDialog" id="statusDialog" header="Status" modal="true" height="32" resizable="false" draggable="false">
             <img src="resources/images/ajaxloadingbar.gif" width="220"/>
         </p:dialog>
+        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+            <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+        </p:confirmDialog>
         <h:form id="PositionsListForm">
             <p:panelGrid columns="1">
                 <p:gmap model="#{tripView.tripModel}" center="37.335556,-122.009167" type="TERRAIN"
@@ -54,6 +58,9 @@
                         </h:outputText>
                     </p:column>
                     <f:facet name="footer">
+                        <p:commandButton id="deleteButton" value="#{bundle.Delete}" icon="ui-icon-delete" actionListener="#{tripView.deleteTrip()}" update="growl">
+                            <p:confirm header="Confirmation" message="Are you sure?" icon="ui-icon-alert" />
+                        </p:commandButton>
                         <p:commandButton id="viewButton" icon="ui-icon-search" value="#{bundle.View}" update=":PositionsViewForm" oncomplete="PF('PositionsViewDialog').show()" disabled="#{empty tripView.selected}"/>
                     </f:facet>
                 </p:dataTable>

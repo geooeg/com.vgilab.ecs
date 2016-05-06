@@ -1,14 +1,16 @@
 package com.vgilab.ecs.rest.resource;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.validation.constraints.NotNull;
 
 /**
  *
  * @author smuellner
  */
+@JsonIgnoreProperties(ignoreUnknown = true) 
 public class DeviceResource {
         
-    private String IdentifierForVendor;
+    private String identifierForVendor;
     
     @NotNull
     private String maker;
@@ -24,14 +26,14 @@ public class DeviceResource {
      * @return the IdentifierForVendor
      */
     public String getIdentifierForVendor() {
-        return IdentifierForVendor;
+        return identifierForVendor;
     }
 
     /**
-     * @param IdentifierForVendor the IdentifierForVendor to set
+     * @param identifierForVendor the identifierForVendor to set
      */
-    public void setIdentifierForVendor(String IdentifierForVendor) {
-        this.IdentifierForVendor = IdentifierForVendor;
+    public void setIdentifierForVendor(String identifierForVendor) {
+        this.identifierForVendor = identifierForVendor;
     }
     
     /**
