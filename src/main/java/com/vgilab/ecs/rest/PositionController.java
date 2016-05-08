@@ -68,9 +68,8 @@ public class PositionController {
                         positionInTime.setPosition(position);
                         positionInTime.setTrip(tripEntity);
                         final DateTime startedOn = new DateTime(tripEntity.getStartedOn());
-                        final Integer trackedOn = curPositionDto.getTrackedOn().intValue() * 1000;
-                        startedOn.plusMillis(trackedOn);
-                        positionInTime.setTrackedOn(startedOn.toCalendar(Locale.getDefault()));
+                        final DateTime trackedOn = startedOn.plusSeconds(curPositionDto.getTrackedOn().intValue());
+                        positionInTime.setTrackedOn(trackedOn.toCalendar(Locale.getDefault()));
                         positionBatchResourceToPositionInTimeEntityModellMapper.map(positionBatch, positionInTime);
                         positionResourceToPositionInTimeEntityModellMapper.map(curPositionDto, positionInTime);
                         position.getPositionsInTime().add(positionInTime);

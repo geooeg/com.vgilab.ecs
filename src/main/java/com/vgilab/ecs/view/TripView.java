@@ -1,7 +1,9 @@
 package com.vgilab.ecs.view;
 
 import com.mysema.query.types.Predicate;
+import com.vgilab.ecs.persistence.dto.AltitudeInTimeDto;
 import com.vgilab.ecs.persistence.dto.PositionInTimeDto;
+import com.vgilab.ecs.persistence.dto.SpeedInTimeDto;
 import com.vgilab.ecs.persistence.entity.PositionInTimeEntity;
 import com.vgilab.ecs.persistence.entity.TripEntity;
 import com.vgilab.ecs.persistence.predicates.PositionInTimePredicate;
@@ -11,6 +13,7 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -18,6 +21,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
+import org.primefaces.model.chart.Axis;
+import org.primefaces.model.chart.AxisType;
+import org.primefaces.model.chart.LineChartModel;
+import org.primefaces.model.chart.LineChartSeries;
 import org.primefaces.model.map.DefaultMapModel;
 import org.primefaces.model.map.LatLng;
 import org.primefaces.model.map.MapModel;
@@ -143,7 +150,7 @@ public class TripView implements Serializable {
     public String deleteTrip() {
         this.positionInTimeRepository.delete(this.trip.getPositionsInTime());
         this.trip.getPositionsInTime().clear();
-        this.tripRepository.save(this.trip);
+        this.trip = this.tripRepository.save(this.trip);
         this.tripRepository.delete(this.trip);
         return "index.xhtml?faces-redirect=true";
     }
@@ -172,6 +179,47 @@ public class TripView implements Serializable {
             this.tripModel.addOverlay(tripPolyline);
         }
         return this.tripModel;
+    }
+
+    /**
+     * @return the markerModel
+     */
+    public LineChartModel getAltitudeLineModel() {
+        final List<AltitudeInTimeDto> altitudeOverTime = this.positionInTimeRepository.findByTripAsAltitudeInTimeDto(this.trip);
+        final LineChartModel model = new LineChartModel();
+        model.setTitle("Altitude in meter");
+        model.setLegendPosition("e");
+        final Axis xAxis = model.getAxis(AxisType.X);
+        xAxis.setMin(0);
+        xAxis.setMax(altitudeOverTime.size());
+        final LineChartSeries series = new LineChartSeries();
+        series.setShowMarker(false);
+        series.setLabel("");
+        IntStream.range(0, altitudeOverTime.size())
+                .forEach(idx -> {
+                    series.set(idx, altitudeOverTime.get(idx).getAltitude());
+                });
+        model.addSeries(series);
+        return model;
+    }
+    
+    public LineChartModel getSpeedLineModel() {
+        final List<SpeedInTimeDto> speedOverTime = this.positionInTimeRepository.findByTripAsSpeedInTimeDto(this.trip);
+        final LineChartModel model = new LineChartModel();
+        model.setTitle("Speed in meter per seconds");
+        model.setLegendPosition("e");
+        final Axis xAxis = model.getAxis(AxisType.X);
+        xAxis.setMin(0);
+        xAxis.setMax(speedOverTime.size());
+        final LineChartSeries series = new LineChartSeries();
+        series.setShowMarker(false);
+        series.setLabel("");
+        IntStream.range(0, speedOverTime.size())
+                .forEach(idx -> {
+                    series.set(idx, speedOverTime.get(idx).getSpeed());
+                });
+        model.addSeries(series);
+        return model;
     }
 
     /**

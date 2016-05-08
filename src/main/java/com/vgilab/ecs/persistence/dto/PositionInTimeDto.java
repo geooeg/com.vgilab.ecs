@@ -4,14 +4,14 @@ package com.vgilab.ecs.persistence.dto;
  *
  * @author smuellner
  */
-public class PositionInTimeDto {
+public class PositionInTimeDto extends BaseDto {
     
     private Double longitude;
 
     private Double latitude;
 
-    
-    public PositionInTimeDto(Double longitude, Double latitude) {
+    public PositionInTimeDto(Long id, Double longitude, Double latitude) {
+        super(id);
         this.longitude = longitude;
         this.latitude = latitude;
     }

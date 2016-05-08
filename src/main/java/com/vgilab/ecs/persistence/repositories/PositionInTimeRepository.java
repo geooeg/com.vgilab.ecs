@@ -1,6 +1,8 @@
 package com.vgilab.ecs.persistence.repositories;
 
+import com.vgilab.ecs.persistence.dto.AltitudeInTimeDto;
 import com.vgilab.ecs.persistence.dto.PositionInTimeDto;
+import com.vgilab.ecs.persistence.dto.SpeedInTimeDto;
 import com.vgilab.ecs.persistence.entity.PositionInTimeEntity;
 import com.vgilab.ecs.persistence.entity.TripEntity;
 import java.util.List;
@@ -20,8 +22,14 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PositionInTimeRepository extends PagingAndSortingRepository<PositionInTimeEntity, Long>, QueryDslPredicateExecutor<PositionInTimeEntity>  {
 
-    @Query("SELECT new com.vgilab.ecs.persistence.dto.PositionInTimeDto(p.position.longitude, p.position.latitude) FROM PositionInTimeEntity p WHERE p.trip = :trip AND p.position IS NOT NULL ORDER BY p.trackedOn ASC")
+    @Query("SELECT new com.vgilab.ecs.persistence.dto.PositionInTimeDto(p.id, p.position.longitude, p.position.latitude) FROM PositionInTimeEntity p WHERE p.trip = :trip AND p.position IS NOT NULL ORDER BY p.trackedOn ASC")
     public List<PositionInTimeDto> findByTripAsPositionInTimeDto(@Param("trip") final TripEntity trip);
+    
+    @Query("SELECT new com.vgilab.ecs.persistence.dto.AltitudeInTimeDto(p.id, p.altitude) FROM PositionInTimeEntity p WHERE p.trip = :trip AND p.position IS NOT NULL ORDER BY p.trackedOn ASC")
+    public List<AltitudeInTimeDto> findByTripAsAltitudeInTimeDto(@Param("trip") final TripEntity trip);
+    
+    @Query("SELECT new com.vgilab.ecs.persistence.dto.SpeedInTimeDto(p.id, p.speed) FROM PositionInTimeEntity p WHERE p.trip = :trip AND p.position IS NOT NULL ORDER BY p.trackedOn ASC")
+    public List<SpeedInTimeDto> findByTripAsSpeedInTimeDto(@Param("trip") final TripEntity trip);
     
     /**
      *
