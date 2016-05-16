@@ -66,7 +66,10 @@ public class TripController {
             if (StringUtils.isNotEmpty(tripId) && this.tripRepository.exists(tripId)) {
                 final TripEntity tripEntity = this.tripRepository.findOne(tripId);
                 tripEntity.setStoppedOn(stopTripResource.getEndTime() != null ? stopTripResource.getEndTime() :  Calendar.getInstance());
+                tripEntity.setTitle(stopTripResource.getTitle());
                 this.tripRepository.save(tripEntity);
+                stopTripResponse.setStoppedOn(tripEntity.getStoppedOn().getTimeInMillis() / 1000);
+                stopTripResponse.setTripId(tripId);
             } else {
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             }

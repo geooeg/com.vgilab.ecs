@@ -7,11 +7,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.stereotype.Repository;
 
 /**
  *
  * @author smuellner
  */
+@Repository
 public interface TripRepository extends PagingAndSortingRepository<TripEntity, String>, QueryDslPredicateExecutor<TripEntity>  {
 
     /**

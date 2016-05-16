@@ -4,11 +4,13 @@ import com.vgilab.ecs.persistence.entity.AuthorizationCodeEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.stereotype.Repository;
 
 /**
  *
  * @author smuellner
  */
+@Repository
 public interface AuthorizationCodeRepository extends PagingAndSortingRepository<AuthorizationCodeEntity, String>  {
    
     /**

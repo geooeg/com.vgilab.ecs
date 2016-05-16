@@ -13,6 +13,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class StopTripResource {
     @NotNull
     private String tripId;
+    
+    private String title;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private Calendar endTime;
@@ -43,5 +45,19 @@ public class StopTripResource {
      */
     public void setEndTime(Calendar endTime) {
         this.endTime = endTime;
+    }
+        
+    /**
+     * @return the title
+     */
+    public String getTitle() {
+        return title;
+    }
+
+    /**
+     * @param title the title to set
+     */
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

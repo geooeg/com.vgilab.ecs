@@ -11,11 +11,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 /**
  *
  * @author smuellner
  */
+@Repository
 public interface MoodRepository extends PagingAndSortingRepository<MoodEntity, String>, QueryDslPredicateExecutor<MoodEntity>  {
 
     @Query("SELECT new com.vgilab.ecs.persistence.dto.MoodDto(m.uuid, m.position.longitude, m.position.latitude, m.emoticon) FROM MoodEntity m WHERE m.trip = :trip AND m.position IS NOT NULL ORDER BY m.trackedOn ASC")

@@ -15,8 +15,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 import javax.annotation.PostConstruct;
+import javax.faces.application.ConfigurableNavigationHandler;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
@@ -126,6 +128,18 @@ public class TripView implements Serializable {
 
     public void onRowUnselect(SelectEvent event) {
         this.selected = null;
+    }
+
+    public void remove() {
+        if (trip != null) {
+            trip = tripRepository.findOne(trip.getId());
+            positionInTimeRepository.delete(trip.getPositionsInTime());
+            trip.setPositionsInTime(null);
+            trip = tripRepository.save(trip);
+            tripRepository.delete(trip);
+            final ConfigurableNavigationHandler configurableNavigationHandler = (ConfigurableNavigationHandler) FacesContext.getCurrentInstance().getApplication().getNavigationHandler();
+            configurableNavigationHandler.performNavigation("/?faces-redirect=true");
+        }
     }
 
     /**

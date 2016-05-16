@@ -12,11 +12,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 /**
  *
  * @author smuellner
  */
+@Repository
 public interface TagRepository  extends PagingAndSortingRepository<TagEntity, String>, QueryDslPredicateExecutor<MoodEntity>  {
 
     @Query("SELECT new com.vgilab.ecs.persistence.dto.TagDto(te.uuid, te.position.longitude, te.position.latitude, te.category) FROM TagEntity te WHERE te.trip = :trip AND te.position IS NOT NULL ORDER BY te.trackedOn ASC")
