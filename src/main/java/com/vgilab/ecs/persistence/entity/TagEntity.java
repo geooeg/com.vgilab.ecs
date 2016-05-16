@@ -5,6 +5,8 @@ import com.vgilab.ecs.enums.TagCategory;
 import java.util.Calendar;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
@@ -32,9 +34,11 @@ public class TagEntity extends UuidEntity {
     @JoinColumn(name = "trip_id", nullable=true)
     private TripEntity trip;
     
+    @Enumerated(EnumType.STRING)
     @Column(name = "content_type", nullable=false, length=30)
     private ContentType contentType = ContentType.QR_CODE;
     
+    @Enumerated(EnumType.STRING)
     @Column(name = "category", nullable=false, length=30)
     private TagCategory category = TagCategory.GENERAL;
 
@@ -46,7 +50,7 @@ public class TagEntity extends UuidEntity {
     private String content;
     
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "trackedOn", nullable = true)
+    @Column(name = "tracked_on", nullable = true)
     private Calendar trackedOn;
 
     /**

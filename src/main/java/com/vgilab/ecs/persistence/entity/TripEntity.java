@@ -28,11 +28,20 @@ public class TripEntity extends UuidEntity {
     @JoinColumn(name = "device_id")
     private DeviceEntity device;
 
+    @Column(name = "shared")
+    private Boolean shared;
+    
     @Column(name = "title")
     private String title;
 
     @OneToMany(mappedBy="trip", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PositionInTimeEntity> positionsInTime = new LinkedList<>();
+    
+    @OneToMany(mappedBy="trip", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<MoodEntity> moods = new LinkedList<>();
+    
+    @OneToMany(mappedBy="trip", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<TagEntity> tags = new LinkedList<>();
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "startedOn", nullable = false)
@@ -112,8 +121,51 @@ public class TripEntity extends UuidEntity {
         this.stoppedOn = stoppedOn;
     }
     
+    /**
+     * @return the moods
+     */
+    public List<MoodEntity> getMoods() {
+        return moods;
+    }
+
+    /**
+     * @param moods the moods to set
+     */
+    public void setMoods(List<MoodEntity> moods) {
+        this.moods = moods;
+    }
+
+    /**
+     * @return the tags
+     */
+    public List<TagEntity> getTags() {
+        return tags;
+    }
+
+    /**
+     * @param tags the tags to set
+     */
+    public void setTags(List<TagEntity> tags) {
+        this.tags = tags;
+    }
+    
     @Override
     public String toString() {
         return "com.vgilab.ecs.persistence.entity.TripEntity[ id=" + getId() + " ]";
     }
+
+    /**
+     * @return the shared
+     */
+    public Boolean getShared() {
+        return shared;
+    }
+
+    /**
+     * @param shared the shared to set
+     */
+    public void setShared(Boolean shared) {
+        this.shared = shared;
+    }
+
 }

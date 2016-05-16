@@ -20,6 +20,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import org.apache.commons.lang3.StringUtils;
+import org.primefaces.event.ItemSelectEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
@@ -62,6 +63,10 @@ public class TripView implements Serializable {
     private MapModel tripModel;
 
     private String selectedImageURL;
+
+    private List<AltitudeInTimeDto> altitudeOverTime;
+
+    private List<SpeedInTimeDto> speedOverTime;
 
     public void preRenderView() {
         this.tripModel = null;
@@ -117,13 +122,7 @@ public class TripView implements Serializable {
     public void onRowSelect(SelectEvent event) {
         this.selected = (PositionInTimeEntity) event.getObject();
         this.selectedImageURL = null;
-        this.tripModel.getMarkers().clear();
-        if (null != this.selected && null != this.selected.getPosition().getLatitude() && null != this.selected.getPosition().getLongitude()) {
-            final LatLng coord = new LatLng(this.selected.getPosition().getLatitude(), this.selected.getPosition().getLongitude());
-            final StringBuilder altitude = new StringBuilder();
-            altitude.append(null == this.selected.getAltitude() ? "-" : this.selected.getAltitude());
-            this.tripModel.addOverlay(new Marker(coord, altitude.toString(), "", "http://maps.google.com/mapfiles/ms/micons/blue-dot.png"));
-        }
+        this.updateMarkers();
     }
 
     public void onRowUnselect(SelectEvent event) {
@@ -191,6 +190,7 @@ public class TripView implements Serializable {
                 tripPolyline.getPaths().add(latLng);
             });
             this.tripModel.addOverlay(tripPolyline);
+            this.updateMarkers();
         }
         return this.tripModel;
     }
@@ -199,7 +199,7 @@ public class TripView implements Serializable {
      * @return the markerModel
      */
     public LineChartModel getAltitudeLineModel() {
-        final List<AltitudeInTimeDto> altitudeOverTime = this.positionInTimeRepository.findByTripAsAltitudeInTimeDto(this.trip);
+        this.altitudeOverTime = this.positionInTimeRepository.findByTripAsAltitudeInTimeDto(this.trip);
         final LineChartModel model = new LineChartModel();
         model.setTitle("Altitude in meter");
         model.setLegendPosition("e");
@@ -216,21 +216,21 @@ public class TripView implements Serializable {
         model.addSeries(series);
         return model;
     }
-    
+
     public LineChartModel getSpeedLineModel() {
-        final List<SpeedInTimeDto> speedOverTime = this.positionInTimeRepository.findByTripAsSpeedInTimeDto(this.trip);
+        this.speedOverTime = this.positionInTimeRepository.findByTripAsSpeedInTimeDto(this.trip);
         final LineChartModel model = new LineChartModel();
         model.setTitle("Speed in meter per seconds");
         model.setLegendPosition("e");
         final Axis xAxis = model.getAxis(AxisType.X);
         xAxis.setMin(0);
-        xAxis.setMax(speedOverTime.size());
+        xAxis.setMax(this.speedOverTime.size());
         final LineChartSeries series = new LineChartSeries();
         series.setShowMarker(false);
         series.setLabel("");
-        IntStream.range(0, speedOverTime.size())
+        IntStream.range(0, this.speedOverTime.size())
                 .forEach(idx -> {
-                    series.set(idx, speedOverTime.get(idx).getSpeed());
+                    series.set(idx, this.speedOverTime.get(idx).getSpeed());
                 });
         model.addSeries(series);
         return model;
@@ -255,5 +255,34 @@ public class TripView implements Serializable {
      */
     public void setTrip(TripEntity trip) {
         this.trip = trip;
+    }
+
+    public void speedSelect(ItemSelectEvent event) {
+        final SpeedInTimeDto speedSelected = this.speedOverTime.get(event.getItemIndex());
+        this.selected = this.positionInTimeRepository.findOne(speedSelected.getId());
+        this.updateMarkers();
+    }
+
+    public void altitudeSelect(ItemSelectEvent event) {
+        final AltitudeInTimeDto altitudeSelected = this.altitudeOverTime.get(event.getItemIndex());
+        this.selected = this.positionInTimeRepository.findOne(altitudeSelected.getId());
+        this.updateMarkers();
+    }
+
+    private void updateMarkers() {
+        if (null != this.selected && null != this.selected.getPosition().getLatitude() && null != this.selected.getPosition().getLongitude()) {
+            final LatLng coord = new LatLng(this.selected.getPosition().getLatitude(), this.selected.getPosition().getLongitude());
+            final StringBuilder altitude = new StringBuilder();
+            altitude.append(null == this.selected.getAltitude() ? "-" : this.selected.getAltitude());
+            this.tripModel.addOverlay(new Marker(coord, altitude.toString(), "", "http://maps.google.com/mapfiles/ms/micons/blue-dot.png"));
+        }
+        this.trip.getMoods().stream().forEach(m -> {
+            final LatLng coord = new LatLng(m.getPosition().getLatitude(), m.getPosition().getLongitude());
+            this.tripModel.addOverlay(new Marker(coord, m.getEmoticon().toString()));
+        });
+        this.trip.getTags().stream().forEach(t -> {
+            final LatLng coord = new LatLng(t.getPosition().getLatitude(), t.getPosition().getLongitude());
+            this.tripModel.addOverlay(new Marker(coord, t.getContent()));
+        });
     }
 }

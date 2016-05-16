@@ -21,7 +21,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TagRepository  extends PagingAndSortingRepository<TagEntity, String>, QueryDslPredicateExecutor<MoodEntity>  {
 
-    @Query("SELECT new com.vgilab.ecs.persistence.dto.TagDto(te.uuid, te.position.longitude, te.position.latitude, te.category) FROM TagEntity te WHERE te.trip = :trip AND te.position IS NOT NULL ORDER BY te.trackedOn ASC")
+    @Query("SELECT new com.vgilab.ecs.persistence.dto.TagDto(te.id, te.position.longitude, te.position.latitude, te.category) FROM TagEntity te WHERE te.trip = :trip AND te.position IS NOT NULL ORDER BY te.trackedOn ASC")
     public List<TagDto> findByTripAsTagDto(@Param("trip") final TripEntity trip);
     
     /**

@@ -40,7 +40,7 @@ public class MoodEntity extends UuidEntity {
     private String message;
      
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "trackedOn", nullable = true)
+    @Column(name = "tracked_on", nullable = true)
     private Calendar trackedOn;
     
     /**

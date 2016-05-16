@@ -28,6 +28,8 @@
                 <db.jdbcUrl>jdbc:postgresql://localhost:5432/ecsdb</db.jdbcUrl>
                 <db.username>ecs</db.username>
                 <db.password>YOUR_SECURE_PASSWORD</db.password>
+                <db.schema-generation-action>none</db.schema-generation-action>
+                <db.schema-generation.scripts.action>none</db.schema-generation.scripts.action>
                 <web.context></web.context>
                 <web.context.reloadable>false</web.context.reloadable>
                 <web.context.antiJARLocking>false</web.context.antiJARLocking>
@@ -46,6 +48,8 @@
                 <db.jdbcUrl>jdbc:postgresql://localhost:5433/ecsdb</db.jdbcUrl>
                 <db.username>ecs</db.username>
                 <db.password>YOUR_SECURE_PASSWORD</db.password>
+                <db.schema-generation-action>drop-and-create</db.schema-generation-action>
+                <db.schema-generation.scripts.action>drop-and-create</db.schema-generation.scripts.action>
                 <web.context>/ecs</web.context>
                 <web.context.reloadable>true</web.context.reloadable>
                 <web.context.antiJARLocking>true</web.context.antiJARLocking>

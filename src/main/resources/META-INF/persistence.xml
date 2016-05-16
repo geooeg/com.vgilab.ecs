@@ -7,14 +7,20 @@
             <property name="javax.persistence.jdbc.driver" value="${db.driverClassName}"/>
             <property name="javax.persistence.jdbc.url" value="${db.jdbcUrl}"/>
             <property name="javax.persistence.jdbc.user" value="${db.username}"/>
-            <property name="javax.persistence.jdbc.password" value="${db.password}"/> 
+            <property name="javax.persistence.jdbc.password" value="${db.password}"/>
+            <property name="javax.persistence.schema-generation-action" value="${db.schema-generation-action}"/>
+            <property name="javax.persistence.schema-generation-target" value="database-and-scripts"/>
+            <property name="javax.persistence.schema-generation.scripts.action" value="${db.schema-generation.scripts.action}"/>
+            <property name="javax.persistence.schema-generation.scripts.create-target" value="create.ddl"/>
+            <property name="javax.persistence.schema-generation.scripts.drop-target" value="drop.ddl"/>
         </properties>
         <class>com.vgilab.ecs.persistence.entity.TripEntity</class>
+        <class>com.vgilab.ecs.persistence.entity.TagEntity</class>
+        <class>com.vgilab.ecs.persistence.entity.MoodEntity</class>
         <class>com.vgilab.ecs.persistence.entity.DeviceEntity</class>
         <class>com.vgilab.ecs.persistence.entity.PositionEntity</class>
         <class>com.vgilab.ecs.persistence.entity.PositionInTimeEntity</class>
         <class>com.vgilab.ecs.persistence.entity.UserEntity</class>
-        <class>com.vgilab.ecs.persistence.entity.BaseEntity</class>
         <class>com.vgilab.ecs.persistence.entity.AuthorizationCodeEntity</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
     </persistence-unit>

@@ -20,7 +20,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MoodRepository extends PagingAndSortingRepository<MoodEntity, String>, QueryDslPredicateExecutor<MoodEntity>  {
 
-    @Query("SELECT new com.vgilab.ecs.persistence.dto.MoodDto(m.uuid, m.position.longitude, m.position.latitude, m.emoticon) FROM MoodEntity m WHERE m.trip = :trip AND m.position IS NOT NULL ORDER BY m.trackedOn ASC")
+    @Query("SELECT new com.vgilab.ecs.persistence.dto.MoodDto(m.id, m.position.longitude, m.position.latitude, m.emoticon) FROM MoodEntity m WHERE m.trip = :trip AND m.position IS NOT NULL ORDER BY m.trackedOn ASC")
     public List<MoodDto> findByTripAsMoodDto(@Param("trip") final TripEntity trip);
     
     /**
