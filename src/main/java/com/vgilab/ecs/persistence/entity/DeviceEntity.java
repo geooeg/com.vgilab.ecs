@@ -23,6 +23,9 @@ public class DeviceEntity extends UuidEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
+    @Column(name = "active")
+    private Boolean active;
+    
     @Column(name = "name")
     private String name;
     
@@ -56,6 +59,20 @@ public class DeviceEntity extends UuidEntity {
      */
     public void setUser(UserEntity user) {
         this.user = user;
+    }
+
+    /**
+     * @return the active
+     */
+    public Boolean getActive() {
+        return active;
+    }
+
+    /**
+     * @param active the active to set
+     */
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     /**
