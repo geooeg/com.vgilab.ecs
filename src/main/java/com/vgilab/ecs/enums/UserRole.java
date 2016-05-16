@@ -1,4 +1,4 @@
-package com.vgilab.ecs.persistence.entity;
+package com.vgilab.ecs.enums;
 
 /**
  *

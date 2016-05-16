@@ -14,9 +14,9 @@ import org.springframework.stereotype.Component;
  * @author smuellner
  */
 @Component
-@ManagedBean(name = "authorisationCodeView")
+@ManagedBean(name = "authorizationCodeView")
 @SessionScoped
-public class AuthorisationCodeView implements Serializable {
+public class AuthorizationCodeView implements Serializable {
 
     @Autowired
     private AuthorizationCodeRepository authorizationCodeRepository;

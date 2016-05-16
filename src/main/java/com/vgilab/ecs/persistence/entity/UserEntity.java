@@ -1,5 +1,6 @@
 package com.vgilab.ecs.persistence.entity;
 
+import com.vgilab.ecs.enums.UserRole;
 import java.util.LinkedList;
 import java.util.List;
 import javax.persistence.CascadeType;
