@@ -15,6 +15,7 @@ import com.vgilab.ecs.rest.resource.CreateTagResource;
 import com.vgilab.ecs.rest.resource.PositionResource;
 import com.vgilab.ecs.rest.response.CreateTagResponse;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,6 +34,8 @@ import org.springframework.web.bind.annotation.RestController;
 @Component
 @RestController
 public class TagController {
+
+    private static Logger LOGGER = Logger.getLogger(TagController.class.getName());
 
     private final PositionRepository positionRepository;
 
@@ -73,12 +76,23 @@ public class TagController {
                         positionResourceToPositionEntityModellMapper.map(positionResource, position);
                     }
                     tagResourceToEntityModelMapper.map(tagResource, tag);
-                    tag.setPosition(position);
+                    tag.setPosition(this.positionRepository.save(position));
                     tag.setTrip(tripEntity);
-                    tag.setContentType(ContentType.valueOf(tagResource.getContentType()));
-                    tag.setCategory(null != tagResource.getCategory() ? TagCategory.valueOf(tagResource.getCategory()) : TagCategory.GENERAL);
+                    try {
+                        tag.setContentType(Enum.valueOf(ContentType.class, tagResource.getContentType()));
+                    } catch (Exception ex) {
+                        LOGGER.error("Tag Content Type Wrong" + tagResource.getContentType(), ex);
+                        tag.setContentType(ContentType.QR_CODE);
+                    }
+                    try {
+                        tag.setCategory(Enum.valueOf(TagCategory.class, tagResource.getCategory()));
+                    } catch (Exception ex) {
+                        LOGGER.error("Tag Category Wrong" + tagResource.getCategory(), ex);
+                        tag.setCategory(TagCategory.GENERAL);
+                    }
                     createTagResponse.setTagId(this.tagRepository.save(tag).getId());
                 } catch (Exception ex) {
+                    LOGGER.error("TAGGING FAILED", ex);
                     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
                 }
             } else {
