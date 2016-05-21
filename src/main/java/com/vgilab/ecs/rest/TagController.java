@@ -79,11 +79,21 @@ public class TagController {
                         positionResourceToPositionEntityModellMapper.map(positionResource, position);
                     }
                     tagResourceToEntityModelMapper.map(tagResource, tag);
-                    tag.setPosition(position);
+                    tag.setPosition(this.positionRepository.save(position));
                     tag.setTrip(tripEntity);
                     tag.setTrackedOn(tagResource.getTrackedOn()!= null ? tagResource.getTrackedOn().toCalendar(Locale.ENGLISH) : Calendar.getInstance());
-                    tag.setContentType(ContentType.valueOf(tagResource.getContentType()));
-                    tag.setCategory(null != tagResource.getCategory() ? TagCategory.valueOf(tagResource.getCategory()) : TagCategory.GENERAL);
+                    try {
+                        tag.setContentType(Enum.valueOf(ContentType.class, tagResource.getContentType()));
+                    } catch (Exception ex) {
+                        logger.error("Tag Content Type Wrong" + tagResource.getContentType(), ex);
+                        tag.setContentType(ContentType.QR_CODE);
+                    }
+                    try {
+                        tag.setCategory(Enum.valueOf(TagCategory.class, tagResource.getCategory()));
+                    } catch (Exception ex) {
+                        logger.error("Tag Category Wrong" + tagResource.getCategory(), ex);
+                        tag.setCategory(TagCategory.GENERAL);
+                    }
                     createTagResponse.setTagId(this.tagRepository.save(tag).getId());
                 } catch (Exception ex) {
                     logger.error("Wrong request for tagging trip: " + tripId, ex);

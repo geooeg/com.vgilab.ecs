@@ -1,6 +1,8 @@
 package com.vgilab.ecs.rest.resource;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.constraints.NotNull;
 
@@ -8,6 +10,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author ljzhang
  */
+@JsonInclude(Include.NON_NULL) 
 @JsonIgnoreProperties(ignoreUnknown = true) 
 public class PositionResource {
 

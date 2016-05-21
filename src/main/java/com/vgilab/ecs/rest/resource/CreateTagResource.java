@@ -1,6 +1,8 @@
 package com.vgilab.ecs.rest.resource;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import javax.validation.constraints.NotNull;
 import org.joda.time.DateTime;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -9,7 +11,8 @@ import org.springframework.format.annotation.DateTimeFormat;
  *
  * @author smuellner
  */
-@JsonIgnoreProperties(ignoreUnknown = true) 
+@JsonInclude(Include.NON_NULL) 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CreateTagResource {
     
     @NotNull
