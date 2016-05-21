@@ -35,7 +35,7 @@ The REST service allows for posting a batch of positions, depending on the confi
 
 http://<server_ip>:8080/ecs/positions
 
-The JSON schema to post as a content for the postions is structured like this:
+The JSON schema to post as a content for the positions is structured like this:
 
 {
   "$schema": "http://json-schema.org/draft-04/schema#",

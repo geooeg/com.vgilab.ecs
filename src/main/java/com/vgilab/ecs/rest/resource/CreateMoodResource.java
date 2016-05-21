@@ -1,8 +1,8 @@
 package com.vgilab.ecs.rest.resource;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import java.util.Calendar;
 import javax.validation.constraints.NotNull;
+import org.joda.time.DateTime;
 import org.springframework.format.annotation.DateTimeFormat;
 
 /**
@@ -25,7 +25,7 @@ public class CreateMoodResource {
     private String message;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private Calendar trackedOn;
+    private DateTime trackedOn;
 
     /**
      * @return the deviceId
@@ -100,14 +100,14 @@ public class CreateMoodResource {
     /**
      * @return the trackedOn
      */
-    public Calendar getTrackedOn() {
+    public DateTime getTrackedOn() {
         return trackedOn;
     }
 
     /**
      * @param trackedOn the trackedOn to set
      */
-    public void setTrackedOn(Calendar trackedOn) {
+    public void setTrackedOn(DateTime trackedOn) {
         this.trackedOn = trackedOn;
     }
     

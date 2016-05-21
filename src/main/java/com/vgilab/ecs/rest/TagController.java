@@ -14,8 +14,12 @@ import com.vgilab.ecs.persistence.repositories.TripRepository;
 import com.vgilab.ecs.rest.resource.CreateTagResource;
 import com.vgilab.ecs.rest.resource.PositionResource;
 import com.vgilab.ecs.rest.response.CreateTagResponse;
+import java.util.Calendar;
+import java.util.Locale;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,6 +38,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TagController {
 
+    private final Logger logger = LoggerFactory.getLogger(TagController.class);
+    
     private final PositionRepository positionRepository;
 
     private final TripRepository tripRepository;
@@ -75,16 +81,20 @@ public class TagController {
                     tagResourceToEntityModelMapper.map(tagResource, tag);
                     tag.setPosition(position);
                     tag.setTrip(tripEntity);
+                    tag.setTrackedOn(tagResource.getTrackedOn()!= null ? tagResource.getTrackedOn().toCalendar(Locale.ENGLISH) : Calendar.getInstance());
                     tag.setContentType(ContentType.valueOf(tagResource.getContentType()));
                     tag.setCategory(null != tagResource.getCategory() ? TagCategory.valueOf(tagResource.getCategory()) : TagCategory.GENERAL);
                     createTagResponse.setTagId(this.tagRepository.save(tag).getId());
                 } catch (Exception ex) {
+                    logger.error("Wrong request for tagging trip: " + tripId, ex);
                     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
                 }
             } else {
+                logger.error("Missing trip for tag: " + tripId);
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             }
         } else {
+            logger.error("Missing content for tag");
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(createTagResponse, HttpStatus.OK);

@@ -4,10 +4,9 @@ import com.google.gson.Gson;
 import com.vgilab.ecs.persistence.repositories.DeviceRepository;
 import com.vgilab.ecs.persistence.repositories.TripRepository;
 import com.vgilab.ecs.rest.resource.CreateTripResource;
-import com.vgilab.ecs.rest.resource.DeviceResource;
 import com.vgilab.ecs.rest.resource.StopTripResource;
-import java.util.Calendar;
 import java.util.UUID;
+import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -63,10 +62,10 @@ public class TripUnitTest {
         mockMvc = MockMvcBuilders.standaloneSetup(new TripController(tripRepository, deviceRepository)).build();
         mockedCreateTripResource = mock(CreateTripResource.class);
         mockedCreateTripResource.setDeviceId(UUID.randomUUID().toString());
-        mockedCreateTripResource.setStartTime(Calendar.getInstance());  
+        mockedCreateTripResource.setStartTime(DateTime.now());  
         mockedStopTripResource = mock(StopTripResource.class);
         mockedStopTripResource.setTripId(UUID.randomUUID().toString());
-        mockedStopTripResource.setEndTime(Calendar.getInstance()); 
+        mockedStopTripResource.setEndTime(DateTime.now()); 
     }
 
     @After

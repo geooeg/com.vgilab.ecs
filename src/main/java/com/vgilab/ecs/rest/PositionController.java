@@ -12,6 +12,8 @@ import java.util.Locale;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,6 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 @Component
 @RestController
 public class PositionController {
+    
+    private final Logger logger = LoggerFactory.getLogger(PositionController.class);
 
     private final PositionRepository positionRepository;
 
@@ -77,12 +81,15 @@ public class PositionController {
                     }).forEach((position) -> {
                     });
                 } catch (Exception ex) {
+                    logger.error("Wrong request for trip: " + tripId, ex);
                     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
                 }
             } else {
+                logger.error("Missing trip for positions: " + tripId);
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             }
         } else {
+            logger.error("Missing content for tag");
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(positionBatch, HttpStatus.OK);

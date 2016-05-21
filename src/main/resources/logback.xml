@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <Pattern>.%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg %n</Pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>TRACE</level>
+        </filter>
+    </appender>
+
+    <appender name="dailyRollingFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${catalina.base}/logs/ecs/ecs.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <FileNamePattern>ecs.%d{yyyy-MM-dd}.log</FileNamePattern>
+
+            <!-- keep 30 days' worth of history -->
+            <maxHistory>30</maxHistory>			
+        </rollingPolicy>
+
+        <encoder>
+            <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg %n</Pattern>
+        </encoder> 	    
+    </appender>
+    <appender name="minuteRollingFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover every minute -->
+            <FileNamePattern>${catalina.base}/logs/ecs/minutes/ecs-minute.%d{yyyy-MM-dd_HH-mm}.log</FileNamePattern>
+
+            <!-- keep 30 minutes' worth of history -->
+            <maxHistory>30</maxHistory>			
+        </rollingPolicy>
+
+        <encoder>
+            <Pattern>%-4relative [%thread] %-5level %logger{35} - %msg %n</Pattern>
+        </encoder> 	    
+    </appender>
+    
+    <logger name="com.vgilab.ecs" level="debug" />
+    <logger name="com.fasterxml" level="warn" />
+    <logger name="org.eclipselink" level="warn" />
+    <logger name="org.primefaces" level="warn" />
+    <logger name="org.modelmapper" level="warn" />
+    <logger name="org.springframework.dao" level="warn" />
+    <logger name="org.springframework.orm" level="warn" />
+    <logger name="org.springframework.jdbc" level="warn" />
+    <logger name="org.springframework.data.jpa" level="warn" />
+    <logger name="org.springframework.web" level="warn" />
+
+    <root>
+        <level value="info" />
+        <appender-ref ref="dailyRollingFileAppender"/>
+        <appender-ref ref="consoleAppender" />
+    </root>
+</configuration>

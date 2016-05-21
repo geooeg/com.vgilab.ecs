@@ -20,7 +20,6 @@ public class TagModelMapper {
             protected void configure() {
                 this.skip().setId(null);
                 this.map().setContent(this.source.getContent());
-                this.map().setTrackedOn(this.source.getTrackedOn());
             }
         });
         return modelMapper;

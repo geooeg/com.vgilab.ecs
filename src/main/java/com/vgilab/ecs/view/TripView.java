@@ -56,6 +56,8 @@ public class TripView implements Serializable {
 
     private LazyDataModel<PositionInTimeEntity> positionsInTime;
 
+    private String tripId;
+
     private TripEntity trip;
 
     private PositionInTimeEntity selected;
@@ -70,6 +72,9 @@ public class TripView implements Serializable {
 
     public void preRenderView() {
         this.tripModel = null;
+        if (StringUtils.isNotBlank(this.tripId)) {
+            this.trip = tripRepository.findOne(this.tripId);
+        }
     }
 
     @PostConstruct
@@ -90,8 +95,8 @@ public class TripView implements Serializable {
                     page = TripView.this.positionInTimeRepository.findAll(TripView.this.getPositionPredicate(filters), pageRequest);
                     TripView.this.positionsInTime.setRowCount(Long.valueOf(TripView.this.positionInTimeRepository.count(TripView.this.getPositionPredicate(filters))).intValue());
                 } else {
-                    page = TripView.this.positionInTimeRepository.findAll(PositionInTimePredicate.predicate(TripView.this.trip), pageRequest);
-                    TripView.this.positionsInTime.setRowCount(Long.valueOf(TripView.this.positionInTimeRepository.count(PositionInTimePredicate.predicate(TripView.this.trip))).intValue());
+                    page = TripView.this.positionInTimeRepository.findAll(PositionInTimePredicate.predicate(TripView.this.getTrip()), pageRequest);
+                    TripView.this.positionsInTime.setRowCount(Long.valueOf(TripView.this.positionInTimeRepository.count(PositionInTimePredicate.predicate(TripView.this.getTrip()))).intValue());
                 }
                 final List<PositionInTimeEntity> result = new LinkedList<>();
                 for (PositionInTimeEntity curCoordinate : page) {
@@ -116,7 +121,7 @@ public class TripView implements Serializable {
         final String latitude = filters.containsKey("latitude") ? String.valueOf(filters.get("latitude")) : null;
         final String longitude = filters.containsKey("longitude") ? String.valueOf(filters.get("longitude")) : null;
         final String averageAltitude = filters.containsKey("altitude") ? String.valueOf(filters.get("altitude")) : null;
-        return PositionInTimePredicate.predicateWithLocationAndDevice(this.trip, latitude, longitude, averageAltitude);
+        return PositionInTimePredicate.predicateWithLocationAndDevice(this.getTrip(), latitude, longitude, averageAltitude);
     }
 
     public void onRowSelect(SelectEvent event) {
@@ -129,16 +134,27 @@ public class TripView implements Serializable {
         this.selected = null;
     }
 
-    public void remove() {
-        if (trip != null) {
-            trip = tripRepository.findOne(trip.getId());
-            positionInTimeRepository.delete(trip.getPositionsInTime());
-            trip.setPositionsInTime(null);
-            trip = tripRepository.save(trip);
-            tripRepository.delete(trip);
+    /**
+     *
+     * @return
+     */
+    public String deleteTrip() {
+        if (this.getTrip() != null) {
+            this.trip = tripRepository.findOne(this.getTrip().getId());
+            if (this.getTrip().getPositionsInTime() != null) {
+                this.getTrip().getPositionsInTime().stream().forEach( pit -> {
+                    pit.setTrip(null);
+                    pit = this.positionInTimeRepository.save(pit);
+                    this.positionInTimeRepository.delete(pit);
+                });
+                this.getTrip().getPositionsInTime().clear();
+                this.trip = this.tripRepository.save(this.getTrip());
+            }
+            this.tripRepository.delete(this.getTrip());
             final ConfigurableNavigationHandler configurableNavigationHandler = (ConfigurableNavigationHandler) FacesContext.getCurrentInstance().getApplication().getNavigationHandler();
             configurableNavigationHandler.performNavigation("/?faces-redirect=true");
         }
+        return "index.xhtml?faces-redirect=true";
     }
 
     /**
@@ -157,18 +173,6 @@ public class TripView implements Serializable {
     }
 
     /**
-     *
-     * @return
-     */
-    public String deleteTrip() {
-        this.positionInTimeRepository.delete(this.trip.getPositionsInTime());
-        this.trip.getPositionsInTime().clear();
-        this.trip = this.tripRepository.save(this.trip);
-        this.tripRepository.delete(this.trip);
-        return "index.xhtml?faces-redirect=true";
-    }
-
-    /**
      * @return the center position
      */
     public String getCenter() {
@@ -179,9 +183,9 @@ public class TripView implements Serializable {
      * @return the markerModel
      */
     public MapModel getTripModel() {
-        if (this.tripModel == null && this.trip != null) {
+        if (this.tripModel == null && this.getTrip() != null) {
             this.tripModel = new DefaultMapModel();
-            final List<PositionInTimeDto> positions = this.positionInTimeRepository.findByTripAsPositionInTimeDto(this.trip);
+            final List<PositionInTimeDto> positions = this.positionInTimeRepository.findByTripAsPositionInTimeDto(this.getTrip());
             final Polyline tripPolyline = new Polyline();
             tripPolyline.setStrokeWeight(1);
             tripPolyline.setStrokeColor("blue");
@@ -199,7 +203,7 @@ public class TripView implements Serializable {
      * @return the markerModel
      */
     public LineChartModel getAltitudeLineModel() {
-        this.altitudeOverTime = this.positionInTimeRepository.findByTripAsAltitudeInTimeDto(this.trip);
+        this.altitudeOverTime = this.positionInTimeRepository.findByTripAsAltitudeInTimeDto(this.getTrip());
         final LineChartModel model = new LineChartModel();
         model.setTitle("Altitude in meter");
         model.setLegendPosition("e");
@@ -218,7 +222,7 @@ public class TripView implements Serializable {
     }
 
     public LineChartModel getSpeedLineModel() {
-        this.speedOverTime = this.positionInTimeRepository.findByTripAsSpeedInTimeDto(this.trip);
+        this.speedOverTime = this.positionInTimeRepository.findByTripAsSpeedInTimeDto(this.getTrip());
         final LineChartModel model = new LineChartModel();
         model.setTitle("Speed in meter per seconds");
         model.setLegendPosition("e");
@@ -243,20 +247,6 @@ public class TripView implements Serializable {
         return selectedImageURL;
     }
 
-    /**
-     * @return the trip
-     */
-    public TripEntity getTrip() {
-        return trip;
-    }
-
-    /**
-     * @param trip the trip to set
-     */
-    public void setTrip(TripEntity trip) {
-        this.trip = trip;
-    }
-
     public void speedSelect(ItemSelectEvent event) {
         final SpeedInTimeDto speedSelected = this.speedOverTime.get(event.getItemIndex());
         this.selected = this.positionInTimeRepository.findOne(speedSelected.getId());
@@ -276,13 +266,34 @@ public class TripView implements Serializable {
             altitude.append(null == this.selected.getAltitude() ? "-" : this.selected.getAltitude());
             this.tripModel.addOverlay(new Marker(coord, altitude.toString(), "", "http://maps.google.com/mapfiles/ms/micons/blue-dot.png"));
         }
-        this.trip.getMoods().stream().forEach(m -> {
+        this.getTrip().getMoods().stream().forEach(m -> {
             final LatLng coord = new LatLng(m.getPosition().getLatitude(), m.getPosition().getLongitude());
             this.tripModel.addOverlay(new Marker(coord, m.getEmoticon().toString()));
         });
-        this.trip.getTags().stream().forEach(t -> {
+        this.getTrip().getTags().stream().forEach(t -> {
             final LatLng coord = new LatLng(t.getPosition().getLatitude(), t.getPosition().getLongitude());
             this.tripModel.addOverlay(new Marker(coord, t.getContent()));
         });
+    }
+
+    /**
+     * @return the tripId
+     */
+    public String getTripId() {
+        return tripId;
+    }
+
+    /**
+     * @param tripId the tripId to set
+     */
+    public void setTripId(String tripId) {
+        this.tripId = tripId;
+    }
+
+    /**
+     * @return the trip
+     */
+    public TripEntity getTrip() {
+        return trip;
     }
 }

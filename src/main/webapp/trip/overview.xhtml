@@ -7,6 +7,7 @@
       xmlns:p="http://primefaces.org/ui">    
     <f:metadata>
         <f:event type="preRenderView" listener="#{tripView.preRenderView}"/>
+        <f:viewParam name="id" value="#{tripView.tripId}" />
     </f:metadata>
     <h:head>
         <title><ui:insert name="title">#{bundle.Positions}</ui:insert></title>
@@ -38,11 +39,11 @@
             <div class="ui-fluid">
                 <p:breadCrumb>
                     <p:menuitem icon="ui-icon-home" value="Home" url="/index.xhtml"/>
-                    <p:menuitem value="#{tripView.trip.title}" rendered="#{not empty tripView.trip.title}" />
+                    <p:menuitem value="#{not empty tripView.trip.title ? tripView.trip.title : tripView.trip.id}" />
                 </p:breadCrumb>
                 <!--<p:tabView dynamic="true" cache="true">-->
                 <p:tabView style="width:100%">
-                    <p:tab title="#{bundle.Map}">
+                    <p:tab title="#{bundle.Overview}">
                         <p:panelGrid columns="1" style="width:100%" styleClass="ui-panelgrid-blank">
                             <p:gmap model="#{tripView.tripModel}" center="#{tripView.center}" type="TERRAIN"
                                     fitBounds="true" zoom="15" style="width:100%;height:450px" id="map" widgetVar="map" >
@@ -55,7 +56,7 @@
                             </p:chart>
                         </p:panelGrid>
                     </p:tab>
-                    <p:tab title="#{bundle.List}">
+                    <p:tab title="#{bundle.Coordinates}">
                         <p:dataTable var="positionInTime" value="#{tripView.positionsInTime}" paginator="true" rows="10" scrollable="true"
                                      paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                      rowsPerPageTemplate="5,10,15,30,60,100,1000" id="datalist" lazy="true" selectionMode="single" reflow="true">
@@ -92,9 +93,56 @@
                             </f:facet>
                         </p:dataTable>
                     </p:tab>
+                    <p:tab title="#{bundle.Tags}">
+                        <p:dataTable var="tag" value="#{tripView.trip.tags}" paginator="true" rows="10" scrollable="true"
+                                     paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15,30,60,100,1000" lazy="true" reflow="true">
+                            <p:column headerText="#{bundle.Tag}" sortBy="#{tag.content}" filterBy="#{tag.content}">
+                                <ui:fragment rendered="#{tag.isUrl()}">
+                                    <a href="#{tag.content}" target="_blank">
+                                        <h:outputText value="#{tag.content}" />
+                                    </a>
+                                </ui:fragment>
+                                <ui:fragment rendered="#{not tag.isUrl()}">
+                                    <h:outputText value="#{tag.content}" />
+                                </ui:fragment>
+                            </p:column>
+                            <p:column headerText="#{bundle.Latitude}" sortBy="#{tag.position.latitude}" filterBy="#{tag.position.latitude}">
+                                <h:outputText value="#{tag.position.latitude}" />
+                            </p:column>
+                            <p:column headerText="#{bundle.Longitude}" sortBy="#{tag.position.longitude}" filterBy="#{tag.position.longitude}">
+                                <h:outputText value="#{tag.position.longitude}" />
+                            </p:column>
+                            <p:column headerText="#{bundle.Timestamp}" sortBy="#{tag.trackedOn}">
+                                <h:outputText value="#{tag.trackedOn.time}">
+                                    <f:convertDateTime type="both" dateStyle="long" />
+                                </h:outputText>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                    <p:tab title="#{bundle.Moods}">
+                        <p:dataTable var="mood" value="#{tripView.trip.moods}" paginator="true" rows="10" scrollable="true"
+                                     paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15,30,60,100,1000" lazy="true" reflow="true">
+                            <p:column headerText="#{bundle.Mood}">
+                                <h:outputText value="#{mood.emoticon}" />
+                            </p:column>
+                            <p:column headerText="#{bundle.Latitude}" sortBy="#{mood.position.latitude}" filterBy="#{mood.position.latitude}">
+                                <h:outputText value="#{mood.position.latitude}" />
+                            </p:column>
+                            <p:column headerText="#{bundle.Longitude}" sortBy="#{mood.position.longitude}" filterBy="#{mood.position.longitude}">
+                                <h:outputText value="#{mood.position.longitude}" />
+                            </p:column>
+                            <p:column headerText="#{bundle.Timestamp}" sortBy="#{mood.trackedOn}">
+                                <h:outputText value="#{mood.trackedOn.time}">
+                                    <f:convertDateTime type="both" dateStyle="long" />
+                                </h:outputText>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
                 </p:tabView>
             </div>
         </h:form>
-        <ui:include src="View.xhtml"/>
+        <ui:include src="position_details.xhtml"/>
     </h:body>
 </html>

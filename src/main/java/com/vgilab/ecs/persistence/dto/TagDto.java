@@ -57,7 +57,7 @@ public class TagDto extends UuidDto {
     }
 
     /**
-     * @param tagCategory the category to set
+     * @param category
      */
     public void setCategory(TagCategory category) {
         this.category = category;

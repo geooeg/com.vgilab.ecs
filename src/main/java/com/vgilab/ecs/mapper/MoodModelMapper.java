@@ -3,6 +3,7 @@ package com.vgilab.ecs.mapper;
 
 import com.vgilab.ecs.persistence.entity.MoodEntity;
 import com.vgilab.ecs.rest.resource.CreateMoodResource;
+import java.util.Locale;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.modelmapper.convention.MatchingStrategies;
@@ -21,7 +22,7 @@ public class MoodModelMapper {
             protected void configure() {
                 this.skip().setId(null);
                 this.map().setMessage(this.source.getMessage());
-                this.map().setTrackedOn(this.source.getTrackedOn());
+                this.map().setTrackedOn(this.source.getTrackedOn().toCalendar(Locale.ENGLISH));
             }
         });
         return modelMapper;

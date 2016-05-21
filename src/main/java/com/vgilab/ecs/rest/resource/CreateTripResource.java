@@ -1,8 +1,8 @@
 package com.vgilab.ecs.rest.resource;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import java.util.Calendar;
 import javax.validation.constraints.NotNull;
+import org.joda.time.DateTime;
 import org.springframework.format.annotation.DateTimeFormat;
 
 /**
@@ -16,7 +16,7 @@ public class CreateTripResource {
     private String deviceId;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private Calendar startTime;
+    private DateTime startTime;
     
     /**
      * @return the deviceId
@@ -35,14 +35,14 @@ public class CreateTripResource {
     /**
      * @return the startTime
      */
-    public Calendar getStartTime() {
+    public DateTime getStartTime() {
         return startTime;
     }
 
     /**
      * @param startTime the startTime to set
      */
-    public void setStartTime(Calendar startTime) {
+    public void setStartTime(DateTime startTime) {
         this.startTime = startTime;
     }
 }

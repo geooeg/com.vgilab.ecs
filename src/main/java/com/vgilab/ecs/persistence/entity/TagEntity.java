@@ -164,4 +164,8 @@ public class TagEntity extends UuidEntity {
     public void setTrackedOn(Calendar trackedOn) {
         this.trackedOn = trackedOn;
     }
+    
+    public boolean isUrl() {
+        return ContentType.URL.equals(this.contentType);
+    }
 }

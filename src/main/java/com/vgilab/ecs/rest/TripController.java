@@ -9,7 +9,10 @@ import com.vgilab.ecs.rest.resource.CreateTripResource;
 import com.vgilab.ecs.rest.response.StopTripResponse;
 import com.vgilab.ecs.rest.response.CreateTripResponse;
 import java.util.Calendar;
+import java.util.Locale;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,6 +30,8 @@ import org.springframework.web.bind.annotation.RestController;
 @Component
 @RestController
 public class TripController {
+    
+    private final Logger logger = LoggerFactory.getLogger(TripController.class);
 
     private final TripRepository tripRepository;
     private final DeviceRepository deviceRepository;
@@ -46,13 +51,15 @@ public class TripController {
                 final DeviceEntity deviceEntity = this.deviceRepository.findOne(deviceId);
                 TripEntity tripEntity = new TripEntity();
                 tripEntity.setDevice(deviceEntity);
-                tripEntity.setStartedOn(createTripResource.getStartTime() != null ? createTripResource.getStartTime() :  Calendar.getInstance());
+                tripEntity.setStartedOn(createTripResource.getStartTime() != null ? createTripResource.getStartTime().toCalendar(Locale.ENGLISH) :  Calendar.getInstance());
                 tripEntity = this.tripRepository.save(tripEntity);
                 createTripResponse.setTripId(tripEntity.getId());
             } else {
+                logger.error("Wrong request missing device: " + deviceId);
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             }
         } else {
+            logger.error("Wrong request missing content");
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(createTripResponse, HttpStatus.OK);
@@ -65,7 +72,7 @@ public class TripController {
             final String tripId = stopTripResource.getTripId();
             if (StringUtils.isNotEmpty(tripId) && this.tripRepository.exists(tripId)) {
                 final TripEntity tripEntity = this.tripRepository.findOne(tripId);
-                tripEntity.setStoppedOn(stopTripResource.getEndTime() != null ? stopTripResource.getEndTime() :  Calendar.getInstance());
+                tripEntity.setStoppedOn(stopTripResource.getEndTime() != null ? stopTripResource.getEndTime().toCalendar(Locale.ENGLISH) :  Calendar.getInstance());
                 tripEntity.setTitle(stopTripResource.getTitle());
                 this.tripRepository.save(tripEntity);
                 stopTripResponse.setStoppedOn(tripEntity.getStoppedOn().getTimeInMillis() / 1000);

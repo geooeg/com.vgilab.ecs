@@ -1,8 +1,8 @@
 package com.vgilab.ecs.rest.resource;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import java.util.Calendar;
 import javax.validation.constraints.NotNull;
+import org.joda.time.DateTime;
 import org.springframework.format.annotation.DateTimeFormat;
 
 /**
@@ -17,7 +17,7 @@ public class StopTripResource {
     private String title;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private Calendar endTime;
+    private DateTime endTime;
     
     /**
      * @return the tripId
@@ -36,14 +36,14 @@ public class StopTripResource {
     /**
      * @return the endTime
      */
-    public Calendar getEndTime() {
+    public DateTime getEndTime() {
         return endTime;
     }
 
     /**
      * @param endTime the endTime to set
      */
-    public void setEndTime(Calendar endTime) {
+    public void setEndTime(DateTime endTime) {
         this.endTime = endTime;
     }
         

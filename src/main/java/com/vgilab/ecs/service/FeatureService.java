@@ -11,6 +11,9 @@ import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +51,12 @@ public class FeatureService {
                 featureBuilder.add(point);
                 if (null != curPositionInTime.getAltitude()) {
                     featureBuilder.add(curPositionInTime.getAltitude());
+                } else {
+                    featureBuilder.add(null);
                 }
+                final DateTime createdAt = new DateTime(curPositionInTime.getTrackedOn());
+                final DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("dd/MM/yyyyHH:mm:ss");
+                featureBuilder.add(dateTimeFormatter.print(createdAt));
                 return curPositionInTime;
             }).forEach((_item) -> {
                 features.add(featureBuilder.buildFeature(null));
@@ -77,7 +85,12 @@ public class FeatureService {
             featureBuilder.add(point);
             if (null != curPosition.getAverageAltitude()) {
                 featureBuilder.add(curPosition.getAverageAltitude());
+            } else {
+                featureBuilder.add(null);
             }
+            final DateTime createdAt = new DateTime(curPosition.getModificationTime());
+            final DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("dd/MM/yyyyHH:mm:ss");
+            featureBuilder.add(dateTimeFormatter.print(createdAt));
             return curPosition;
         }).forEach((_item) -> {
             features.add(featureBuilder.buildFeature(null));
@@ -90,7 +103,8 @@ public class FeatureService {
         featureTypeBuilder.setName("Point");
         featureTypeBuilder.setCRS(DefaultGeographicCRS.WGS84_3D); // set crs first
         featureTypeBuilder.add("the_geom", Point.class); // then add geometry
-        featureTypeBuilder.add("height", Double.class);
+        featureTypeBuilder.add("elevation", Double.class);
+        featureTypeBuilder.add("datetime", String.class);
         return featureTypeBuilder.buildFeatureType();
     }
 }

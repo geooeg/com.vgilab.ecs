@@ -101,9 +101,9 @@ public class IndexView implements Serializable {
     public void onRowSelect(SelectEvent event) {
         final TripEntity tripEntity = (TripEntity) event.getObject();
         final TripView productDetailView = (TripView) FacesContext.getCurrentInstance().getApplication().getELResolver().getValue(FacesContext.getCurrentInstance().getELContext(), null, "tripView");
-        productDetailView.setTrip(tripEntity);
+        productDetailView.setTripId(tripEntity.getId());
         final ConfigurableNavigationHandler configurableNavigationHandler = (ConfigurableNavigationHandler) FacesContext.getCurrentInstance().getApplication().getNavigationHandler();
-        configurableNavigationHandler.performNavigation("/trip/List.xhtml?faces-redirect=true");
+        configurableNavigationHandler.performNavigation("/trip/overview.xhtml?tripId=" + tripEntity.getId() + "&faces-redirect=true");
     }
     
     /**
