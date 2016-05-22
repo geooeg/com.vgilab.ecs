@@ -64,7 +64,7 @@ public class TagController {
                 try {
                     final ModelMapper tagResourceToEntityModelMapper = TagModelMapper.getResourceToEntityModellMapper();
                     final ModelMapper positionResourceToPositionEntityModellMapper = PositionModelMapper.getResourceToPositionEntityModellMapper();
-                    final TagEntity tag = new TagEntity();
+                    TagEntity tag = new TagEntity();
                     PositionEntity position = this.positionRepository.findByLongitudeAndLatitude(positionResource.getLongitude(), positionResource.getLatitude());
                     if (null != position) {
                         Double averageAltitude = 0d;
@@ -94,7 +94,10 @@ public class TagController {
                         logger.error("Tag Category Wrong" + tagResource.getCategory(), ex);
                         tag.setCategory(TagCategory.GENERAL);
                     }
-                    createTagResponse.setTagId(this.tagRepository.save(tag).getId());
+                    tag = this.tagRepository.save(tag);
+                    tripEntity.getTags().add(tag);
+                    this.tripRepository.save(tripEntity);
+                    createTagResponse.setTagId(tag.getId());
                 } catch (Exception ex) {
                     logger.error("Wrong request for tagging trip: " + tripId, ex);
                     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

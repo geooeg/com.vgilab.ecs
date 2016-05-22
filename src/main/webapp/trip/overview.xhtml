@@ -6,8 +6,9 @@
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:p="http://primefaces.org/ui">    
     <f:metadata>
+        <f:viewParam name="tripId" value="#{tripView.tripId}" />
+        <f:viewAction action="#{tripView.loadTrip}"/>
         <f:event type="preRenderView" listener="#{tripView.preRenderView}"/>
-        <f:viewParam name="id" value="#{tripView.tripId}" />
     </f:metadata>
     <h:head>
         <title><ui:insert name="title">#{bundle.Positions}</ui:insert></title>
@@ -24,7 +25,10 @@
             }
 
             function fitBounds() {
+                var originalMaxZoom = PF('map').map.maxZoom;
+                PF('map').map.setOptions({maxZoom: 18});
                 PF('map').map.fitBounds = google.maps.Map.prototype.fitBounds;
+                PF('map').map.setOptions({maxZoom: originalMaxZoom});
             }
         </script>
         <p:growl id="growl" sticky="true" showDetail="true"/>
@@ -46,7 +50,8 @@
                     <p:tab title="#{bundle.Overview}">
                         <p:panelGrid columns="1" style="width:100%" styleClass="ui-panelgrid-blank">
                             <p:gmap model="#{tripView.tripModel}" center="#{tripView.center}" type="TERRAIN"
-                                    fitBounds="true" zoom="15" style="width:100%;height:450px" id="map" widgetVar="map" >
+                                    fitBounds="true" zoom="#{tripView.zoom}" style="width:100%;height:450px" id="map" widgetVar="map">
+                                <p:ajax event="stateChange" listener="#{tripView.onStateChange}"/>
                             </p:gmap>
                             <p:chart type="line" model="#{tripView.altitudeLineModel}" style="height:300px;margin:20px 0" responsive="true">
                                 <p:ajax event="itemSelect" listener="#{tripView.altitudeSelect}" update="map" oncomplete="fitBounds();" />

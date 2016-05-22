@@ -8,5 +8,4 @@ public enum ContentType {
     URL,
     QR_CODE,
     BAR_CODE;
-    
 }

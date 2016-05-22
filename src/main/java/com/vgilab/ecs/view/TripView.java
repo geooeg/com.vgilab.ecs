@@ -22,6 +22,7 @@ import javax.faces.context.FacesContext;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.event.ItemSelectEvent;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.event.map.StateChangeEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 import org.primefaces.model.chart.Axis;
@@ -33,6 +34,8 @@ import org.primefaces.model.map.LatLng;
 import org.primefaces.model.map.MapModel;
 import org.primefaces.model.map.Marker;
 import org.primefaces.model.map.Polyline;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -48,6 +51,8 @@ import org.springframework.stereotype.Component;
 @SessionScoped
 public class TripView implements Serializable {
 
+    private final Logger logger = LoggerFactory.getLogger(TripView.class);
+
     @Autowired
     private TripRepository tripRepository;
 
@@ -55,6 +60,8 @@ public class TripView implements Serializable {
     private PositionInTimeRepository positionInTimeRepository;
 
     private LazyDataModel<PositionInTimeEntity> positionsInTime;
+
+    private Integer zoom;
 
     private String tripId;
 
@@ -71,10 +78,14 @@ public class TripView implements Serializable {
     private List<SpeedInTimeDto> speedOverTime;
 
     public void preRenderView() {
+    }
+        
+    public String loadTrip() {
+        logger.trace("loadTrip");
+        this.selected = null;
         this.tripModel = null;
-        if (StringUtils.isNotBlank(this.tripId)) {
-            this.trip = tripRepository.findOne(this.tripId);
-        }
+        this.updateMapModel();
+        return "";
     }
 
     @PostConstruct
@@ -127,7 +138,7 @@ public class TripView implements Serializable {
     public void onRowSelect(SelectEvent event) {
         this.selected = (PositionInTimeEntity) event.getObject();
         this.selectedImageURL = null;
-        this.updateMarkers();
+        this.updateMapMarkers();
     }
 
     public void onRowUnselect(SelectEvent event) {
@@ -142,7 +153,7 @@ public class TripView implements Serializable {
         if (this.getTrip() != null) {
             this.trip = tripRepository.findOne(this.getTrip().getId());
             if (this.getTrip().getPositionsInTime() != null) {
-                this.getTrip().getPositionsInTime().stream().forEach( pit -> {
+                this.getTrip().getPositionsInTime().stream().forEach(pit -> {
                     pit.setTrip(null);
                     pit = this.positionInTimeRepository.save(pit);
                     this.positionInTimeRepository.delete(pit);
@@ -169,7 +180,7 @@ public class TripView implements Serializable {
      * @return the selected
      */
     public PositionInTimeEntity getSelected() {
-        return selected;
+        return this.selected;
     }
 
     /**
@@ -179,23 +190,47 @@ public class TripView implements Serializable {
         return (null != this.selected && null != this.selected.getPosition().getLatitude() && null != this.selected.getPosition().getLongitude()) ? this.selected.getPosition().getLatitude().toString() + "," + this.selected.getPosition().getLongitude().toString() : "0.0,0.0";
     }
 
+
+    /**
+     * @return the tripId
+     */
+    public String getTripId() {
+        return tripId;
+    }
+
+    /**
+     * @param tripId the tripId to set
+     */
+    public void setTripId(String tripId) {
+        this.tripId = tripId;
+    }
+
+    /**
+     * @return the trip
+     */
+    public TripEntity getTrip() {
+        return trip;
+    }
+    
+    /**
+     * @return the center position
+     */
+    public Integer getZoom() {
+        return (null != this.zoom) ? this.zoom : 15;
+    }
+
+    /**
+     *
+     * @param event
+     */
+    public void onStateChange(StateChangeEvent event) {
+        this.zoom = event.getZoomLevel();
+    }
+
     /**
      * @return the markerModel
      */
     public MapModel getTripModel() {
-        if (this.tripModel == null && this.getTrip() != null) {
-            this.tripModel = new DefaultMapModel();
-            final List<PositionInTimeDto> positions = this.positionInTimeRepository.findByTripAsPositionInTimeDto(this.getTrip());
-            final Polyline tripPolyline = new Polyline();
-            tripPolyline.setStrokeWeight(1);
-            tripPolyline.setStrokeColor("blue");
-            tripPolyline.setStrokeOpacity(0.8);
-            positions.stream().map((curPositionInTimeEntity) -> new LatLng(curPositionInTimeEntity.getLatitude(), curPositionInTimeEntity.getLongitude())).forEach((latLng) -> {
-                tripPolyline.getPaths().add(latLng);
-            });
-            this.tripModel.addOverlay(tripPolyline);
-            this.updateMarkers();
-        }
         return this.tripModel;
     }
 
@@ -250,50 +285,52 @@ public class TripView implements Serializable {
     public void speedSelect(ItemSelectEvent event) {
         final SpeedInTimeDto speedSelected = this.speedOverTime.get(event.getItemIndex());
         this.selected = this.positionInTimeRepository.findOne(speedSelected.getId());
-        this.updateMarkers();
+        this.tripModel.getMarkers().clear();
+        this.updateMapMarkers();
     }
 
     public void altitudeSelect(ItemSelectEvent event) {
         final AltitudeInTimeDto altitudeSelected = this.altitudeOverTime.get(event.getItemIndex());
         this.selected = this.positionInTimeRepository.findOne(altitudeSelected.getId());
-        this.updateMarkers();
+        this.tripModel.getMarkers().clear();
+        this.updateMapMarkers();
     }
-
-    private void updateMarkers() {
-        if (null != this.selected && null != this.selected.getPosition().getLatitude() && null != this.selected.getPosition().getLongitude()) {
-            final LatLng coord = new LatLng(this.selected.getPosition().getLatitude(), this.selected.getPosition().getLongitude());
-            final StringBuilder altitude = new StringBuilder();
-            altitude.append(null == this.selected.getAltitude() ? "-" : this.selected.getAltitude());
-            this.tripModel.addOverlay(new Marker(coord, altitude.toString(), "", "http://maps.google.com/mapfiles/ms/micons/blue-dot.png"));
+    
+    private void updateMapMarkers() {
+        try {
+            if (null != this.selected && null != this.selected.getPosition().getLatitude() && null != this.selected.getPosition().getLongitude()) {
+                final LatLng coord = new LatLng(this.selected.getPosition().getLatitude(), this.selected.getPosition().getLongitude());
+                final StringBuilder altitude = new StringBuilder();
+                altitude.append(null == this.selected.getAltitude() ? "-" : this.selected.getAltitude());
+                this.tripModel.addOverlay(new Marker(coord, altitude.toString(), "", "http://maps.google.com/mapfiles/ms/micons/blue-dot.png"));
+            }
+            this.getTrip().getMoods().stream().forEach(m -> {
+                final LatLng coord = new LatLng(m.getPosition().getLatitude(), m.getPosition().getLongitude());
+                this.tripModel.addOverlay(new Marker(coord, m.getEmoticon().toString()));
+            });
+            this.getTrip().getTags().stream().forEach(t -> {
+                final LatLng coord = new LatLng(t.getPosition().getLatitude(), t.getPosition().getLongitude());
+                this.tripModel.addOverlay(new Marker(coord, t.getContent()));
+            });
+        } catch (Exception ex) {
+            logger.error("Update markers failed", ex);
         }
-        this.getTrip().getMoods().stream().forEach(m -> {
-            final LatLng coord = new LatLng(m.getPosition().getLatitude(), m.getPosition().getLongitude());
-            this.tripModel.addOverlay(new Marker(coord, m.getEmoticon().toString()));
-        });
-        this.getTrip().getTags().stream().forEach(t -> {
-            final LatLng coord = new LatLng(t.getPosition().getLatitude(), t.getPosition().getLongitude());
-            this.tripModel.addOverlay(new Marker(coord, t.getContent()));
-        });
     }
-
-    /**
-     * @return the tripId
-     */
-    public String getTripId() {
-        return tripId;
-    }
-
-    /**
-     * @param tripId the tripId to set
-     */
-    public void setTripId(String tripId) {
-        this.tripId = tripId;
-    }
-
-    /**
-     * @return the trip
-     */
-    public TripEntity getTrip() {
-        return trip;
+    
+    private void updateMapModel() {
+        if (StringUtils.isNotBlank(this.tripId)) {
+            this.trip = tripRepository.findOne(this.tripId);
+            this.tripModel = new DefaultMapModel();
+            final List<PositionInTimeDto> positions = this.positionInTimeRepository.findByTripAsPositionInTimeDto(this.getTrip());
+            final Polyline tripPolyline = new Polyline();
+            tripPolyline.setStrokeWeight(1);
+            tripPolyline.setStrokeColor("blue");
+            tripPolyline.setStrokeOpacity(0.8);
+            positions.stream().map((curPositionInTimeEntity) -> new LatLng(curPositionInTimeEntity.getLatitude(), curPositionInTimeEntity.getLongitude())).forEach((latLng) -> {
+                tripPolyline.getPaths().add(latLng);
+            });
+            this.tripModel.addOverlay(tripPolyline);
+            this.updateMapMarkers();
+        }
     }
 }

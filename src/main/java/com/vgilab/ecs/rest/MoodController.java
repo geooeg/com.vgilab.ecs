@@ -61,7 +61,7 @@ public class MoodController {
                 try {
                     final ModelMapper moodResourceToEntityModelMapper = MoodModelMapper.getResourceToEntityModellMapper();
                     final ModelMapper positionResourceToPositionEntityModellMapper = PositionModelMapper.getResourceToPositionEntityModellMapper();
-                    final MoodEntity mood = new MoodEntity();
+                    MoodEntity mood = new MoodEntity();
                     PositionEntity position = this.positionRepository.findByLongitudeAndLatitude(positionResource.getLongitude(), positionResource.getLatitude());
                     if (null != position) {
                         Double averageAltitude = 0d;
@@ -78,8 +78,16 @@ public class MoodController {
                     moodResourceToEntityModelMapper.map(moodResource, mood);
                     mood.setPosition(position);
                     mood.setTrip(tripEntity);
-                    mood.setEmoticon(Emoticon.valueOf(moodResource.getEmoticon()));
-                    createMoodResponse.setMoodId(this.moodRepository.save(mood).getId());
+                    try {
+                        mood.setEmoticon(Emoticon.valueOf(moodResource.getEmoticon()));
+                    } catch (Exception ex) {
+                        logger.error("Emoticon Wrong" + moodResource.getEmoticon(), ex);
+                        mood.setEmoticon(Emoticon.LIKE_IT);
+                    }
+                    mood = this.moodRepository.save(mood);
+                    tripEntity.getMoods().add(mood);
+                    this.tripRepository.save(tripEntity);
+                    createMoodResponse.setMoodId(mood.getId());
                 } catch (Exception ex) {
                     logger.error("Wrong request for setting mood of trip: " + tripId, ex);
                     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
