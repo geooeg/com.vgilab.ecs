@@ -10,6 +10,7 @@ import com.vgilab.ecs.persistence.predicates.PositionInTimePredicate;
 import com.vgilab.ecs.persistence.repositories.PositionInTimeRepository;
 import com.vgilab.ecs.persistence.repositories.TripRepository;
 import java.io.Serializable;
+import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -304,6 +305,10 @@ public class TripView implements Serializable {
                 altitude.append(null == this.selected.getAltitude() ? "-" : this.selected.getAltitude());
                 this.tripModel.addOverlay(new Marker(coord, altitude.toString(), "", "http://maps.google.com/mapfiles/ms/micons/blue-dot.png"));
             }
+            this.getTrip().getMedias().stream().forEach(m -> {
+                final LatLng coord = new LatLng(m.getPosition().getLatitude(), m.getPosition().getLongitude());
+                this.tripModel.addOverlay(new Marker(coord, MessageFormat.format("{0}, {1}", m.getArtist(), m.getTitle())));
+            });
             this.getTrip().getMoods().stream().forEach(m -> {
                 final LatLng coord = new LatLng(m.getPosition().getLatitude(), m.getPosition().getLongitude());
                 this.tripModel.addOverlay(new Marker(coord, m.getEmoticon().toString()));

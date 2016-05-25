@@ -392,23 +392,52 @@
                 <configuration>
                     <path>${web.context}</path>
                 </configuration>
-            </plugin>
-            
+            </plugin>        
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.6</version>
                 <configuration>
+                    <classifier>${envClassifier}</classifier>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <webResources>
+                        <resource>
+                            <directory>src/main/resources</directory>
+                            <filtering>false</filtering>
+                            <excludes>
+                                <exclude>**/*.xml</exclude>
+                            </excludes>	
+                            <targetPath>WEB-INF/classes</targetPath>
+                        </resource>
+                        <resource>
+                            <directory>src/main/resources</directory>
+                            <filtering>true</filtering>
+                            <includes>
+                                <include>**/*.xml</include>
+                            </includes>
+                            <targetPath>WEB-INF/classes</targetPath>
+                        </resource>
+                        <resource>
+                            <directory>src/main/webapp/WEB-INF</directory>
+                            <filtering>true</filtering>
+                            <includes>
+                                <include>**/*.xml</include>
+                                <include>**/*.properties</include>
+                            </includes>						
+                            <targetPath>WEB-INF</targetPath>
+                        </resource>
+                        <resource>
+                            <directory>src/main/webapp/META-INF</directory>
+                            <filtering>true</filtering>
+                            <includes>
+                                <include>**/*.xml</include>
+                            </includes>
+                            <targetPath>META-INF</targetPath>
+                        </resource>
+                    </webResources>
                 </configuration>
             </plugin>
         </plugins>
-        <resources>
-            <resource>
-                <directory>${basedir}/src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
     </build>
     
     <repositories>

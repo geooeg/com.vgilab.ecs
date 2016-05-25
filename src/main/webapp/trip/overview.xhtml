@@ -125,6 +125,32 @@
                             </p:column>
                         </p:dataTable>
                     </p:tab>
+                    <p:tab title="#{bundle.Media}">
+                        <p:dataTable var="media" value="#{tripView.trip.medias}" paginator="true" rows="10" scrollable="true"
+                                     paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15,30,60,100,1000" lazy="true" reflow="true">
+                            <p:column headerText="#{bundle.Title}">
+                                <h:outputText value="#{media.title}" />
+                            </p:column>
+                            <p:column headerText="#{bundle.Artist}">
+                                <h:outputText value="#{media.artist}" />
+                            </p:column>
+                            <p:column headerText="#{bundle.Album}">
+                                <h:outputText value="#{media.album}" />
+                            </p:column>
+                            <p:column headerText="#{bundle.Latitude}" sortBy="#{media.position.latitude}" filterBy="#{media.position.latitude}">
+                                <h:outputText value="#{media.position.latitude}" />
+                            </p:column>
+                            <p:column headerText="#{bundle.Longitude}" sortBy="#{media.position.longitude}" filterBy="#{media.position.longitude}">
+                                <h:outputText value="#{media.position.longitude}" />
+                            </p:column>
+                            <p:column headerText="#{bundle.Timestamp}" sortBy="#{media.trackedOn}">
+                                <h:outputText value="#{media.trackedOn.time}">
+                                    <f:convertDateTime type="both" dateStyle="long" />
+                                </h:outputText>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
                     <p:tab title="#{bundle.Moods}">
                         <p:dataTable var="mood" value="#{tripView.trip.moods}" paginator="true" rows="10" scrollable="true"
                                      paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"

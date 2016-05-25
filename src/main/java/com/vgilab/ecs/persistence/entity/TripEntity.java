@@ -38,6 +38,9 @@ public class TripEntity extends UuidEntity {
     private List<PositionInTimeEntity> positionsInTime = new LinkedList<>();
     
     @OneToMany(mappedBy="trip", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<MediaEntity> medias = new LinkedList<>();
+    
+    @OneToMany(mappedBy="trip", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<MoodEntity> moods = new LinkedList<>();
     
     @OneToMany(mappedBy="trip", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -120,7 +123,21 @@ public class TripEntity extends UuidEntity {
     public void setStoppedOn(Calendar stoppedOn) {
         this.stoppedOn = stoppedOn;
     }
-    
+
+    /**
+     * @return the medias
+     */
+    public List<MediaEntity> getMedias() {
+        return medias;
+    }
+
+    /**
+     * @param medias the medias to set
+     */
+    public void setMedias(List<MediaEntity> medias) {
+        this.medias = medias;
+    }
+
     /**
      * @return the moods
      */
